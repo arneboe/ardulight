@@ -5,7 +5,7 @@
 */
 
 #include <d3d9.h>
-#include "DirectX.h"
+#include "Screen.h"
 #include <QtGlobal>
 using namespace std;
 

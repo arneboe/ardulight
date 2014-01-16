@@ -1,6 +1,6 @@
 ﻿#include "mainwindow.h"
 #include <QApplication>
-#include "DirectX.h"
+#include "Screen.h"
 #include <QLabel>
 #include <QPixmap>
 #include <QPainter>

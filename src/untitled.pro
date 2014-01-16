@@ -13,10 +13,10 @@ TEMPLATE = app
 
 SOURCES += main.cpp \
            mainwindow.cpp \
-           DirectX.cpp
+    Screen.cpp
 
 HEADERS += mainwindow.h \
-           DirectX.h
+    Screen.h
 HEADERS += d3d9.h
 HEADERS += d3dx9.h
 HEADERS += d3dx9d.h
