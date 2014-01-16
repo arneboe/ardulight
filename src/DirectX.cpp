@@ -7,8 +7,6 @@
 #include <d3d9.h>
 #include <d3dx9tex.h>
 #include "DirectX.h"
-#include <iostream>
-#include <assert.h>
 using namespace std;
 
 #define	WINDOW_MODE true
@@ -72,27 +70,13 @@ bool AmbloneDirectX::initD3D(int deviceNum) {
                                                   D3DDEVTYPE_HAL, NULL,
                                                   D3DCREATE_SOFTWARE_VERTEXPROCESSING,
                                                   &d3dpp, &pd3dDevice);
-
-
   if(FAILED(createDeviceResult))
 	{
 		return false;
 	}
-  //make sure that StretchRect supports linear downscaling
-  D3DCAPS9 caps;
-  pd3dDevice->GetDeviceCaps(&caps);
-  assert((caps.StretchRectFilterCaps & D3DPTFILTERCAPS_MINFLINEAR) == D3DPTFILTERCAPS_MINFLINEAR);
 
-
-  //this render target is used to stretch (acutally shrink) the copy of the front buffer
-  if(FAILED(pd3dDevice->CreateRenderTarget(100,100, D3DFMT_A8R8G8B8, D3DMULTISAMPLE_NONE, 0, true, &pAvgSurface, NULL)))
-  {
-     cout << "AAAAAAAAAAAAA";
-  }
-
-  if(FAILED(pd3dDevice->CreateRenderTarget(ddm.Width, ddm.Height, D3DFMT_A8R8G8B8, D3DMULTISAMPLE_NONE, 0, true, &pSurface, NULL)))
+  if(FAILED(pd3dDevice->CreateOffscreenPlainSurface(ddm.Width, ddm.Height, D3DFMT_A8R8G8B8, D3DPOOL_SCRATCH/*D3DPOOL_SYSTEMMEM*/, &pSurface, nullptr)))
 	{
-    cout << "CCCCCCC";
 		return false;
 	}
 	return true;
@@ -100,43 +84,15 @@ bool AmbloneDirectX::initD3D(int deviceNum) {
 
 unsigned char* AmbloneDirectX::getScreenBitmap() {
 
-  if(D3DERR_INVALIDCALL == pd3dDevice->GetFrontBufferData(0, pSurface))
-  {
-    cout << "LALALAL" << endl;
-  }
+  pd3dDevice->GetFrontBufferData(0, pSurface);
   D3DLOCKED_RECT lockedRect;
   //FIXME use scoped locking
-  RECT r;
-  r.right = 100;
-  r.bottom = 100;
-  r.left = 0;
-  r.top = 0;
+  pSurface->LockRect(&lockedRect, nullptr, D3DLOCK_NO_DIRTY_UPDATE|D3DLOCK_NOSYSLOCK|D3DLOCK_READONLY);
+  memcpy(pBits, (unsigned char*) lockedRect.pBits, dataLength);
 
-  if(D3D_OK != pd3dDevice->StretchRect(pSurface, &r, pAvgSurface, NULL, D3DTEXF_LINEAR))
-  {
-    std::cout << "BBBBBBBBBBB";
-  }
-
-  IDirect3DSurface9* pMem;
-  pd3dDevice->CreateOffscreenPlainSurface(screenWidth,screenHeight,D3DFMT_A8R8G8B8, D3DPOOL_SYSTEMMEM,&pMem,NULL);
-
-  if(D3D_OK != pd3dDevice->GetRenderTargetData(pSurface, pMem))
-  {
-    cout << "FUUUU" << endl;
-  }
-
-  pMem->LockRect(&lockedRect, nullptr, D3DLOCK_NO_DIRTY_UPDATE|D3DLOCK_NOSYSLOCK|D3DLOCK_READONLY);
-
-  memcpy(pBits, (unsigned char*) lockedRect.pBits, 100*100*4); //FIXME there has to be a better way than memcopy
-  pMem->UnlockRect();
-
+  pSurface->UnlockRect();
   return pBits;
 }
-
-
-
-
-
 
 int AmbloneDirectX::getHeight() const
 {
