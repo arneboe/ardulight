@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>resources/lightbulb-1.ico</file>
+    </qresource>
+</RCC>

@@ -30,3 +30,6 @@ FORMS += mainwindow.ui
 
 win32:LIBS += -ld3d9 #-ld3dx9 -ld3dx9d
 #win32:LIBS += -L"C:\\dx10sdk\\Lib\\x86" -ld3d9
+
+RESOURCES += \
+    resources.qrc

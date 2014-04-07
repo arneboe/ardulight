@@ -3,7 +3,7 @@
 #include <QSettings>
 #include "global.h"
 #include "light.h"
-#include <QLabel>
+#include <QSystemTrayIcon>
 int main(int argc, char *argv[])
 {
   QApplication a(argc, argv);
@@ -17,4 +17,9 @@ int main(int argc, char *argv[])
     l.setColor(i,0,0,255);
   }
   l.show();
+
+  QSystemTrayIcon tray(QIcon(":/resources/lightbulb-1.ico"));
+  tray.show();
+  a.exec();
+
 }
