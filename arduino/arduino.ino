@@ -1,6 +1,14 @@
 #include "Adafruit_NeoPixel.h"
-
+#include "protocol.h"
 #define PIN 8
+
+
+//this union is used to read shorts from serial
+union Short
+{
+  short value;
+  uint8_t data[2];
+};
 
 // Parameter 1 = number of pixels in strip
 // Parameter 2 = pin number (most are valid)
@@ -11,15 +19,63 @@
 //   NEO_KHZ800  800 KHz bitstream (e.g. High Density LED strip)
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(60, PIN, NEO_GRB + NEO_KHZ800);
 
-void setup() {
+typedef void (*void_ptr_t)( void );
+void_ptr_t commandHandlers[NUM_COMMANDS];
+
+
+//waits until at least count bytes are availabe from the serial port
+void waitForBytes(const uint8_t count);
+
+void handleSetColor();
+void handleFlush();
+
+void setup() 
+{
+  commandHandlers[SET_COLOR] = handleSetColor;
+  commandHandlers[FLUSH] = handleFlush;
   strip.begin();
+  for(int i = 0; i < 60; ++i)
+  {//initialize with white pixels
+    strip.setPixelColor(i, strip.Color(255, 255, 255));
+  }
   strip.show(); // Initialize all pixels to 'off'
   Serial.begin(115200);
+  
 }
 
-void loop() {
-  // Some example procedures showing how to display to the pixels:
-  rainbowCycle(500);
+void loop() 
+{ 
+  //wait for the next command and execute it
+  if(Serial.available() > 0)
+  {
+    uint8_t command = Serial.read();
+    if(command < NUM_COMMANDS)
+    {
+      commandHandlers[command]();
+    }
+  }
+}
+
+void handleSetColor()
+{
+  waitForBytes(5);//5 byte = 1 short and 3 byte RGB
+  Short pixelIndex;
+  Serial.readBytes((char*)&pixelIndex, 2);
+  const uint8_t r = Serial.read();
+  const uint8_t g = Serial.read();
+  const uint8_t b = Serial.read();
+  strip.setPixelColor(pixelIndex.value, strip.Color(r, g, b));
+}
+
+void handleFlush()
+{
+  strip.show();  
+}
+
+
+void waitForBytes(const uint8_t count)
+{
+  while(Serial.available() < count);
 }
 
 // Fill the dots one after the other with a color
