@@ -2,6 +2,8 @@
 #include <QApplication>
 #include <QSettings>
 #include "global.h"
+#include "light.h"
+#include <QLabel>
 int main(int argc, char *argv[])
 {
   QApplication a(argc, argv);
@@ -9,7 +11,10 @@ int main(int argc, char *argv[])
   QCoreApplication::setOrganizationDomain("www.rnae.de");
   QCoreApplication::setApplicationName("Ardulight");
 
-  Global& g = Global::getInstance();
-
-  Global::getInstance().getSettings().setValue("Main/test", "ASDASDADSD");
+  Light l;
+  for(short i = 0; i < 20; ++i)
+  {
+    l.setColor(i,0,0,255);
+  }
+  l.show();
 }
