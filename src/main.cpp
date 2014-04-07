@@ -1,29 +1,15 @@
 ﻿#include "mainwindow.h"
 #include <QApplication>
-#include "Screen.h"
-#include <QLabel>
-#include <QPixmap>
-#include <QPainter>
-
+#include <QSettings>
+#include "global.h"
 int main(int argc, char *argv[])
 {
   QApplication a(argc, argv);
-  Screen x;
-  x.initialize(1);
-  Screen::Pixel* pData = new Screen::Pixel[x.getHeight() * x.getWidth()];
-  x.getScreenBitmap(pData);
-  QImage img(x.getWidth(), x.getHeight(),QImage::Format_ARGB32);
-  for(int h = 0; h < x.getHeight(); ++h)
-  {
-    for(int w = 0; w < x.getWidth(); ++w, ++pData)
-    {
-      img.setPixel(w, h, *((unsigned int*)pData));
-    }
-  }
-  QLabel myLabel;
-  myLabel.setPixmap(QPixmap::fromImage(img));
-  myLabel.show();
+  QCoreApplication::setOrganizationName("rnae.de");
+  QCoreApplication::setOrganizationDomain("www.rnae.de");
+  QCoreApplication::setApplicationName("Ardulight");
 
-  return a.exec();
-  delete[] pData;
+  Global& g = Global::getInstance();
+
+  Global::getInstance().getSettings().setValue("Main/test", "ASDASDADSD");
 }
