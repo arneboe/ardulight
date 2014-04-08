@@ -7,7 +7,7 @@
 
 Light::Light() : lastShowTimestamp(0), port(NULL)
 {
-  const qint32 baud = Global::getInstance().getSettings().value("Hardware/baudRate", 57600).toInt();
+  const qint32 baud = Global::getInstance().getSettings().value("Hardware/baudRate", 115200).toInt();
   const QString portName = Global::getInstance().getSettings().value("Hardware/port", "COM3").toString();
   port.setPortName(portName);
 
@@ -34,6 +34,16 @@ void Light::setColor(const short pixelIndex, const unsigned char r, const unsign
   buffer[pixelIndex].r = r;
   buffer[pixelIndex].g = g;
   buffer[pixelIndex].b = b;
+}
+
+void Light::setAllColors(const unsigned char r, const unsigned char g, const unsigned char b)
+{
+  for(Color& c : buffer)
+  {
+    c.r = r;
+    c.g = g;
+    c.b = b;
+  }
 }
 
 void Light::sendColors()
@@ -75,7 +85,7 @@ void Light::send(const QByteArray& data)
 bool Light::waitForReady()
 {
   char data[1];
-  data[0] = 255;
+  data[0] = -1;
   if(port.waitForReadyRead(10000))
   {
     const int numRead = port.read(&data[0], 1);

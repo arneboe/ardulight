@@ -31,7 +31,7 @@ void handleSetColor();
 void setup() 
 {
   commandHandlers[SET_COLOR] = handleSetColor;
-  Serial.begin(57600);
+  Serial.begin(115200);
   strip.begin();
   
   //flash once to indicate reset

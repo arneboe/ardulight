@@ -13,6 +13,8 @@ public:
   void setColor(const short pixelIndex, const unsigned char r, const unsigned char g,
                 const unsigned char b);
 
+  void setAllColors(const unsigned char r, const unsigned char g, const unsigned char b);
+
   /**Sends all colors to the arduino and shows them */
   void sendColors();
 
