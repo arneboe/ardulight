@@ -2,13 +2,16 @@
 #include "global.h"
 #include <QObject>
 #include "../arduino/protocol.h"
+#include <QThread>
+#include <QDateTime>
 
-Light::Light() : port(NULL)
+Light::Light() : lastShowTimestamp(0), port(NULL)
 {
-  const qint32 baud = Global::getInstance().getSettings().value("Hardware/baudRate", 115200).toInt();
+  const qint32 baud = Global::getInstance().getSettings().value("Hardware/baudRate", 57600).toInt();
   const QString portName = Global::getInstance().getSettings().value("Hardware/port", "COM3").toString();
   port.setPortName(portName);
-  if(!port.open(QIODevice::WriteOnly))
+
+  if(!port.open(QIODevice::ReadWrite))
   {
     qFatal("Unable to open serial port");
     exit(1); //FIXME this is bad style :D
@@ -28,20 +31,24 @@ Light::Light() : port(NULL)
 void Light::setColor(const short pixelIndex, const unsigned char r, const unsigned char g,
                      const unsigned char b)
 {
+  buffer[pixelIndex].r = r;
+  buffer[pixelIndex].g = g;
+  buffer[pixelIndex].b = b;
+}
+
+void Light::sendColors()
+{
   if(port.isOpen())
   {
     QByteArray data;
     data.append(SET_COLOR);
-    data.append((const char*)&pixelIndex, sizeof(short));
-    data.append(r);
-    data.append(g);
-    data.append(b);
-    Q_ASSERT(data.size() == 6);
-    port.write(data);
-    if(!port.waitForBytesWritten(1000))
+    for(const Color& c : buffer)
     {
-      qWarning("Failed to send data to the arduino (write timeout after 1 second).");
+      data.append(c.r);
+      data.append(c.g);
+      data.append(c.b);
     }
+    send(data);
   }
   else
   {
@@ -49,22 +56,44 @@ void Light::setColor(const short pixelIndex, const unsigned char r, const unsign
   }
 }
 
-
-void Light::show()
+void Light::send(const QByteArray& data)
 {
-  if(port.isOpen())
+  if(waitForReady())
   {
-    QByteArray data(1, FLUSH);
     port.write(data);
     if(!port.waitForBytesWritten(1000))
     {
-      qWarning("Failed to send data to the arduino (write timeout after 1 second).");
+     qWarning("Failed to send data to the arduino (write timeout after 1 second).");
     }
   }
   else
   {
-    qWarning("Unable to execute command, serial port is closed.");
+    qWarning("send failed. Device not ready");
   }
+}
+
+bool Light::waitForReady()
+{
+  char data[1];
+  data[0] = 255;
+  if(port.waitForReadyRead(10000))
+  {
+    const int numRead = port.read(&data[0], 1);
+    if(numRead == 1)
+    {
+      return data[0] == (char)RDY;
+    }
+    else
+    {
+      qWarning("Read error, read %d bytes", numRead);
+    }
+  }
+  else
+  {
+    qWarning("Read timeout");
+    return false;
+  }
+  return false;
 }
 
 Light::~Light()

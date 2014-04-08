@@ -8,9 +8,10 @@
  */
 enum Command
 {
-  SET_COLOR, //parameter 0: short containing the pixel id, parameters 1,2 and 3 are RGB
-  FLUSH, //displays the current colors
+  SET_COLOR, //sets all colors
+  RDY, //send by the arduino if it is ready to accept more data
   NUM_COMMANDS //Number of commands
 };
+
 
 
