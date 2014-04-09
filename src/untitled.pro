@@ -15,13 +15,16 @@ SOURCES += main.cpp \
     Screen.cpp \
     light.cpp \
     global.cpp \
-    traymenu.cpp
+    traymenu.cpp \
+    ambilightmode.cpp
 
 HEADERS += Screen.h \
     light.h \
     global.h \
     protocol.h \
-    traymenu.h
+    traymenu.h \
+    imode.h \
+    ambilightmode.h
 HEADERS += d3d9.h
 HEADERS += d3dx9.h
 HEADERS += d3dx9d.h

@@ -2,8 +2,6 @@
 #include "global.h"
 #include <QObject>
 #include "../arduino/protocol.h"
-#include <QThread>
-#include <QDateTime>
 
 Light::Light() : lastShowTimestamp(0), port(NULL)
 {
@@ -16,15 +14,14 @@ Light::Light() : lastShowTimestamp(0), port(NULL)
     qFatal("Unable to open serial port");
     exit(1); //FIXME this is bad style :D
   }
-  if(!port.setBaudRate(baud))
+  if(!port.setParity(QSerialPort::NoParity) &&
+     !port.setStopBits(QSerialPort::OneStop) &&
+     !port.setDataBits(QSerialPort::Data8) &&
+     !port.setFlowControl(QSerialPort::NoFlowControl ) &&
+     !port.setBaudRate(baud))
   {
-    qFatal("Unable to set serial port baud rate");
-    exit(1); //FIXME baaad
-  }
-  if(!port.setFlowControl(QSerialPort::NoFlowControl))
-  {
-    qFatal("Unable to set flow control");
-    exit(1); //FIXME baaad
+     qFatal("Unable to configure serial port");
+     exit(1); //FIXME baaad
   }
 }
 

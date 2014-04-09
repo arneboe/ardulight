@@ -1,4 +1,4 @@
-﻿/**
+/**
  * This file is based on the DirectX.cpp from Amblone (amblone.com).
  * License: https://creativecommons.org/licenses/by-nc/3.0/
  *          https://creativecommons.org/licenses/by-nc/3.0/legalcode
@@ -33,22 +33,22 @@ bool Screen::initialize(int deviceNum) {
 }
 
 bool Screen::initD3D(int deviceNum) {
-	D3DDISPLAYMODE	ddm;
-	D3DPRESENT_PARAMETERS	d3dpp;
+  D3DDISPLAYMODE	ddm;
+  D3DPRESENT_PARAMETERS	d3dpp;
 
   if((pD3D=Direct3DCreate9(D3D_SDK_VERSION))== nullptr)
-	{
+  {
     qCritical("Screen: Call Direct3DCreate9(%d) failed", D3D_SDK_VERSION);
-		return false;
-	}
+    return false;
+  }
   HRESULT result = pD3D->GetAdapterDisplayMode(D3DADAPTER_DEFAULT + deviceNum, &ddm);
   if(FAILED(result))
-	{
+  {
     qCritical("Screen: GetAdapterDisplayMode() for device %d failed", D3DADAPTER_DEFAULT + deviceNum);
-		return false;
-	}
+    return false;
+  }
 
-	ZeroMemory(&d3dpp,sizeof(D3DPRESENT_PARAMETERS));
+  ZeroMemory(&d3dpp,sizeof(D3DPRESENT_PARAMETERS));
   RECT gScreenRect = {0, 0, 0, 0};
 
   d3dpp.Windowed = true;
@@ -69,19 +69,19 @@ bool Screen::initD3D(int deviceNum) {
                               D3DCREATE_SOFTWARE_VERTEXPROCESSING,
                               &d3dpp, &pd3dDevice);
   if(FAILED(result))
-	{
+  {
     qCritical("Screen: CreateDevice() failed");
-		return false;
-	}
+    return false;
+  }
   result = pd3dDevice->CreateOffscreenPlainSurface(ddm.Width, ddm.Height,
                                                    D3DFMT_A8R8G8B8, D3DPOOL_SCRATCH,
                                                    &pSurface, nullptr);
   if(FAILED(result))
-	{
+  {
     qCritical("Screen: CreateDevice() failed");
-		return false;
-	}
-	return true;
+    return false;
+  }
+  return true;
 }
 
 void Screen::getScreenBitmap(Pixel* pOutData) const {

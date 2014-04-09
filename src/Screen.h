@@ -1,4 +1,4 @@
-﻿/**
+/**
  * This file is based on the DirectX.h from Amblone (amblone.com).
  * License: https://creativecommons.org/licenses/by-nc/3.0/
  *          https://creativecommons.org/licenses/by-nc/3.0/legalcode
@@ -11,14 +11,8 @@ struct IDirect3DSurface9;
 class Screen
 {
 public:
+  typedef unsigned int Pixel;
 
-  struct Pixel
-  {
-    unsigned char A;
-    unsigned char R;
-    unsigned char G;
-    unsigned char B;
-  };
 
   Screen();
   ~Screen();

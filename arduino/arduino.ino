@@ -31,9 +31,9 @@ void handleSetColor();
 void setup() 
 {
   commandHandlers[SET_COLOR] = handleSetColor;
-  Serial.begin(115200);
+  Serial.begin(115200, SERIAL_8N1);
   strip.begin();
-  
+  strip.setBrightness(255);
   //flash once to indicate reset
   for(int i = 0; i < 60; ++i)
   {//initialize with white pixels
@@ -45,7 +45,7 @@ void setup()
   {//initialize with white pixels
     strip.setPixelColor(i, strip.Color(255, 255, 255));
   }
-  strip.show();  
+  strip.show();
   Serial.write(RDY);
 }
 

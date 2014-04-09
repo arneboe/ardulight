@@ -6,6 +6,10 @@
 #include <QSystemTrayIcon>
 #include <QThread>
 #include "traymenu.h"
+#include "Screen.h"
+#include <QLabel>
+#include <QDateTime>
+#include "ambilightmode.h"
 int main(int argc, char *argv[])
 {
   QApplication a(argc, argv);
@@ -13,37 +17,30 @@ int main(int argc, char *argv[])
   QCoreApplication::setOrganizationDomain("www.rnae.de");
   QCoreApplication::setApplicationName("Ardulight");
 
-  Light l;
-  QThread::sleep(5);
 
-  while(true)
-  {
-    l.setAllColors(255,0,0);
-    l.sendColors();
-    l.setAllColors(0, 255, 0);
-    l.sendColors();
-    l.setAllColors(0, 0, 255);
-    l.sendColors();
-  }
+//  Screen x;
+//  x.initialize(0);
+//  Screen::Pixel* pData = new Screen::Pixel[x.getHeight() * x.getWidth()];
+//  x.getScreenBitmap(pData);
 
-//  while(true)
+//  QImage img(x.getWidth(), x.getHeight(),QImage::Format_ARGB32);
+//  for(int h = 0; h < x.getHeight(); ++h)
 //  {
-//    unsigned char r = 0;
-//    unsigned char g = 0;
-//    unsigned char b = 64;
-//    for(int i = 0; i < 60; ++i)
+//    for(int w = 0; w < x.getWidth(); ++w)
 //    {
-//      l.setColor(i,r,g,b);
+//      img.setPixel(w, h, );
 //    }
-//    l.show();
-//    ++r; ++g; ++b;
 //  }
-
+//  QLabel myLabel;
+//  myLabel.setPixmap(QPixmap::fromImage(img));
+//  myLabel.show();
 
 
   QSystemTrayIcon tray(QIcon(":/resources/lightbulb-1.ico"));
   TrayMenu* menu = new TrayMenu();
   tray.setContextMenu(menu);//menu should be deleted when tray is destroyed
   tray.show();
+  AmbilightMode mode;
+  mode.startMode();
   a.exec();
 }
