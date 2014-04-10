@@ -1,11 +1,14 @@
 #pragma once
 #include <QtSerialPort/QtSerialPort>
+#include <QObject>
+#include <QMutex>
 /**
  * @brief Hardware interface to the ardulight.
  * Accessing the hardware will block until the command succeded.
  */
-class Light
+class Light : public QObject
 {
+  Q_OBJECT;
 public:
   Light();
   ~Light();
@@ -15,8 +18,13 @@ public:
 
   void setAllColors(const unsigned char r, const unsigned char g, const unsigned char b);
 
-  /**Sends all colors to the arduino and shows them */
+  /**Sends all colors to the arduino and shows them.
+     Is thread safe*/
   void sendColors();
+
+  /**Is thread safe */
+public slots:
+  void setBrightness(const int brightness);
 
 private:
   /**Blocks till the arduino is ready*/
@@ -34,4 +42,5 @@ private:
   qint64 lastShowTimestamp; /**<timestamp of the last show() call */
   QSerialPort port;
   Color buffer[60]; //FIXME led number should not be hard code
+  QMutex sendMutex;
 };

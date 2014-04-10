@@ -27,10 +27,12 @@ void_ptr_t commandHandlers[NUM_COMMANDS];
 void waitForBytes(const uint8_t count);
 
 void handleSetColor();
+void handleSetBrightness();
 
 void setup() 
 {
   commandHandlers[SET_COLOR] = handleSetColor;
+  commandHandlers[SET_BRIGHTNESS] = handleSetBrightness;
   Serial.begin(115200, SERIAL_8N1);
   strip.begin();
   strip.setBrightness(255);
@@ -75,6 +77,13 @@ void handleSetColor()
     strip.setPixelColor(i, r, g, b);
   }
   strip.show();
+}
+
+void handleSetBrightness()
+{
+  waitForBytes(1);
+  const uint8_t brightness = Serial.read();
+  strip.setBrightness(brightness);
 }
 
 

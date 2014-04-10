@@ -35,12 +35,12 @@ int main(int argc, char *argv[])
 //  myLabel.setPixmap(QPixmap::fromImage(img));
 //  myLabel.show();
 
-
+  Light light;
   QSystemTrayIcon tray(QIcon(":/resources/lightbulb-1.ico"));
-  TrayMenu* menu = new TrayMenu();
+  TrayMenu* menu = new TrayMenu(&light);
   tray.setContextMenu(menu);//menu should be deleted when tray is destroyed
   tray.show();
   AmbilightMode mode;
-  mode.startMode();
+  mode.startMode(&light);
   a.exec();
 }

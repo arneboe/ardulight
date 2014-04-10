@@ -2,8 +2,10 @@
 #include "global.h"
 #include <QObject>
 #include "../arduino/protocol.h"
+#include <QMutexLocker>
+#include <iostream>
 
-Light::Light() : lastShowTimestamp(0), port(NULL)
+Light::Light() : lastShowTimestamp(0), port(this)
 {
   const qint32 baud = Global::getInstance().getSettings().value("Hardware/baudRate", 115200).toInt();
   const QString portName = Global::getInstance().getSettings().value("Hardware/port", "COM3").toString();
@@ -65,6 +67,7 @@ void Light::sendColors()
 
 void Light::send(const QByteArray& data)
 {
+  QMutexLocker ml(&sendMutex);
   if(waitForReady())
   {
     port.write(data);
@@ -110,3 +113,15 @@ Light::~Light()
     port.close();
   }
 }
+
+void Light::setBrightness(const int brightness)
+{
+  qWarning("set brightness %d", brightness);
+  Q_ASSERT(brightness >= 0);
+  Q_ASSERT(brightness <= 255);
+  QByteArray data;
+  data.append(SET_BRIGHTNESS);
+  data.append((unsigned char)brightness);
+  send(data);
+}
+
