@@ -7,6 +7,7 @@ class QWidget;
  */
 class LightController
 {
+public:
   LightController(Light* light) : pLight(light){}
 
   /**
@@ -17,7 +18,7 @@ class LightController
   virtual void activate() = 0;
 
   /**
-   * Stop execution if this light controller.
+   * Stop execution of this light controller.
    * This method may block for a short time, i.e. the time it takes to
    * savely stop the controller.
    *
@@ -32,7 +33,7 @@ class LightController
    */
   virtual QWidget* getMenuWidget()
   {
-    return NULL;
+    return nullptr;
   }
 
 protected:
