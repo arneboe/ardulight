@@ -24,7 +24,8 @@ HEADERS += Screen.h \
     protocol.h \
     traymenu.h \
     imode.h \
-    ambilightmode.h
+    ambilightmode.h \
+    LightController.h
 HEADERS += d3d9.h
 HEADERS += d3dx9.h
 HEADERS += d3dx9d.h
