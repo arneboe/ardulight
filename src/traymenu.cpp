@@ -1,42 +1,40 @@
 #include "traymenu.h"
-#include <QLabel>
 #include <QAction>
-#include <QApplication>
 #include <QWidgetAction>
-#include <QSlider>
-#include <QVBoxLayout>
-#include <QLabel>
 #include "light.h"
+#include "LightController.h"
+#include "BrightnessController.h"
 TrayMenu::TrayMenu(Light* light, QWidget* parent) :
-  QMenu(parent)
+  QMenu(parent), quitAction(new QAction("Quit", this))
 {
-  QSlider* brightnessSlider = new QSlider(this);
-  brightnessSlider->setOrientation(Qt::Horizontal);
-  brightnessSlider->setMinimum(0);
-  brightnessSlider->setMaximum(255);
-  QWidgetAction* brightnessAction = new QWidgetAction(this);
-  QLabel* brightnessLabel = new QLabel("Brightness", this);
-  QVBoxLayout* brightnessLayout = new QVBoxLayout(this);
-  brightnessLayout->addWidget(brightnessLabel);
-  brightnessLayout->addWidget(brightnessSlider);
-  QWidget* brightnessWidget = new QWidget(this);
-  brightnessWidget->setLayout(brightnessLayout);
-  brightnessAction->setDefaultWidget(brightnessWidget);
-  this->addAction(brightnessAction);
+  //FIXME this should not be connected to qApp.quit(). Instead it should
+  //invoke a local slot which cleans up before quitting.
+  connect(quitAction, SIGNAL(triggered()),qApp,SLOT(quit()));
 
+  std::unique_ptr<LightController> brightness((LightController*) new BrightnessController(light));
 
-  this->addSeparator();
-  QAction* quitAction = new QAction(tr("&Quit"), this);
-  connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
+  controllers.push_back(std::move(brightness));
+  controllers.back()->activate(); //brightness controll is always active
+
+  //add all actions
+  for(const std::unique_ptr<LightController>& controller : controllers)
+  {
+    QWidgetAction* ctrlAction = controller->getMenuWidget();
+    if(nullptr != ctrlAction)
+    {
+      this->addAction(ctrlAction);
+    }
+  }
   this->addAction(quitAction);
-  pLight = light;
-  connect(brightnessSlider, SIGNAL(valueChanged(int)),
-                     pLight, SLOT(setBrightness(int)), Qt::QueuedConnection);
-
+  updateMenuEntires();
 }
 
-void TrayMenu::brightnessChanged(int newBrightness)
+void TrayMenu::updateMenuEntires()
 {
-  pLight->setBrightness(newBrightness);
+  for(const std::unique_ptr<LightController>& controller : controllers)
+  {
+    QWidgetAction* ctrlAction = controller->getMenuWidget();
+    Q_ASSERT(nullptr != ctrlAction);
+    ctrlAction->setVisible(controller->isActive());
+  }
 }
-

@@ -40,7 +40,5 @@ int main(int argc, char *argv[])
   TrayMenu* menu = new TrayMenu(&light);
   tray.setContextMenu(menu);//menu should be deleted when tray is destroyed
   tray.show();
-  AmbilightMode mode;
-  mode.startMode(&light);
   a.exec();
 }

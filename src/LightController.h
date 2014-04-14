@@ -1,7 +1,7 @@
 #pragma once
 
 class Light;
-class QWidget;
+class QWidgetAction;
 /**
  * The base class of all light controllers.
  */
@@ -27,11 +27,13 @@ public:
    */
   virtual void deactivate() = 0;
 
+  virtual bool isActive() const = 0;
+
   /**
    * While active this widget is shown in the tray menu.
-   * It can be used to configure the controller.
+   * It can be used to configure the controller. 
    */
-  virtual QWidget* getMenuWidget()
+  virtual QWidgetAction* getMenuWidget()
   {
     return nullptr;
   }

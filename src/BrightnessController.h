@@ -17,11 +17,12 @@ public:
 
   virtual void activate();
   virtual void deactivate();
-  virtual QWidget* getMenuWidget();
+  virtual bool isActive() const;
+  virtual QWidgetAction* getMenuWidget();
 private slots:
   void brightnessChanged(int newBrightness);
 
 private:
-  QWidget* pWidget;
+  QWidgetAction* pWidget;
   bool active; /**< True if the controller is currently active*/
 };

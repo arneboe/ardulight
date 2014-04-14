@@ -4,6 +4,7 @@
 #include <QSlider>
 #include <QVBoxLayout>
 #include <QLabel>
+#include <QWidgetAction>
 
 BrightnessController::BrightnessController(Light *light) : LightController(light),
                                                            active(false)
@@ -18,8 +19,11 @@ BrightnessController::BrightnessController(Light *light) : LightController(light
   QVBoxLayout* brightnessLayout = new QVBoxLayout(nullptr);
   brightnessLayout->addWidget(brightnessLabel);
   brightnessLayout->addWidget(brightnessSlider);
-  pWidget = new QWidget(nullptr);
-  pWidget->setLayout(brightnessLayout);
+  QWidget* widget = new QWidget(nullptr);
+  widget->setLayout(brightnessLayout);
+  pWidget = new QWidgetAction(nullptr);
+  pWidget->setDefaultWidget(widget);
+
 
   connect(brightnessSlider, SIGNAL(valueChanged(int)),
                      this, SLOT(brightnessChanged(int)));
@@ -35,7 +39,12 @@ void BrightnessController::deactivate()
   active = false;
 }
 
-QWidget *BrightnessController::getMenuWidget()
+bool BrightnessController::isActive() const
+{
+  return active;
+}
+
+QWidgetAction *BrightnessController::getMenuWidget()
 {
   Q_ASSERT(pWidget != NULL);
   return pWidget;
