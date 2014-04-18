@@ -20,12 +20,19 @@ TrayMenu::TrayMenu(std::shared_ptr<Light> light, QWidget* parent) :
   controllers.push_back(std::move(example));
 
   //populate the controller selection submenu
-  QMenu* controllerSelection = new QMenu("Select controller", this);
+  controllerSelection = new QMenu("Select Mode", this);
   this->addMenu(controllerSelection);
-  for(const std::unique_ptr<LightController>& controller : controllers)
+  for(int i = 0; i < controllers.size(); ++i)
   {
-    controllerSelection->addAction(controller->getName());
+    QAction* act = new QAction(this);
+    act->setCheckable(true);
+    act->setChecked(false);
+    act->setData(QVariant(i));
+    act->setText(controllers[i]->getName());
+    controllerSelection->addAction(act);
   }
+  connect(controllerSelection, SIGNAL(triggered(QAction*)),
+                    this, SLOT(controllerSelected(QAction*)));
 
   this->addSeparator();
 
@@ -62,6 +69,7 @@ TrayMenu::TrayMenu(std::shared_ptr<Light> light, QWidget* parent) :
   this->addAction(quitAction);
 
   activateController(0);//FIXME should be loaded from settings?!
+  controllerSelection->actions()[0]->setChecked(true);//mark the first controller as active
 }
 
 void TrayMenu::activateController(const int controllerIndex)
@@ -87,4 +95,22 @@ void TrayMenu::brightnessChanged(int newBrightness)
   {
     controllers[activeController]->setBrightness(newBrightness);
   }
+}
+
+void TrayMenu::controllerSelected(QAction *action)
+{
+  const int controllerId = action->data().toInt();
+  Q_ASSERT(controllerId >= 0);
+  Q_ASSERT(controllerId < controllers.size());
+
+  if(controllerId != activeController)
+  {
+    //uncheck all actions
+    for(QAction* action : controllerSelection->actions())
+    {
+      action->setChecked(false);
+    }
+    activateController(controllerId);
+  }
+  controllerSelection->actions()[controllerId]->setChecked(true);
 }
