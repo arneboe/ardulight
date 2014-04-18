@@ -19,6 +19,15 @@ TrayMenu::TrayMenu(std::shared_ptr<Light> light, QWidget* parent) :
 
   controllers.push_back(std::move(example));
 
+  //populate the controller selection submenu
+  QMenu* controllerSelection = new QMenu("Select controller", this);
+  this->addMenu(controllerSelection);
+  for(const std::unique_ptr<LightController>& controller : controllers)
+  {
+    controllerSelection->addAction(controller->getName());
+  }
+
+  this->addSeparator();
 
   //add all actions
   for(const std::unique_ptr<LightController>& controller : controllers)
@@ -30,8 +39,6 @@ TrayMenu::TrayMenu(std::shared_ptr<Light> light, QWidget* parent) :
       ctrlAction->setVisible(false);
     }
   }
-
-  this->addSeparator();
 
   //set brightness action
   QSlider* brightnessSlider = new QSlider(nullptr);

@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include <QString>
 class Light;
 class QWidgetAction;
 /**
@@ -8,7 +9,8 @@ class QWidgetAction;
 class LightController
 {
 public:
-  LightController(std::shared_ptr<Light> light) : pLight(light){}
+  LightController(std::shared_ptr<Light> light, const QString& name) :
+    pLight(light), name(name){}
 
   /**
    * Start execution of this light controller.
@@ -41,6 +43,11 @@ public:
    */
   virtual void setBrightness(const unsigned char value) = 0;
 
+  virtual QString getName()
+  {
+    return name;
+  }
+
   /**
    * While active this widget is shown in the tray menu.
    * It can be used to configure the controller. 
@@ -52,4 +59,5 @@ public:
 
 protected:
   std::shared_ptr<Light> pLight; /**<The light that is controlled by this controller */
+  QString name;
 };

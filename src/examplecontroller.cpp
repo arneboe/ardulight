@@ -9,7 +9,7 @@
 #include <QWidgetAction>
 
 ExampleController::ExampleController(std::shared_ptr<Light> light) :
-  LightController(light), active(false), speed(500)
+  LightController(light, "Example"), active(false), speed(500)
 {
   QSlider* slider = new QSlider(nullptr);
   slider->setOrientation(Qt::Horizontal);
