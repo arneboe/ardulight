@@ -9,7 +9,7 @@
 #include <QWidgetAction>
 
 ExampleController::ExampleController(std::shared_ptr<Light> light) :
-  LightController(light, "Example"), active(false), speed(500)
+  LightController(light, "Example"), active(false), speed(500), brightness(255)
 {
   QSlider* slider = new QSlider(nullptr);
   slider->setOrientation(Qt::Horizontal);
@@ -49,7 +49,7 @@ bool ExampleController::isActive() const
 
 void ExampleController::setBrightness(const unsigned char value)
 {
-  //TODO
+  brightness = value;
 }
 
 QWidgetAction *ExampleController::getMenuWidget()
@@ -66,8 +66,15 @@ void ExampleController::speedChanged(int newSpeed)
 void ExampleController::run()
 {
   QMutexLocker ml(&threadActive);
+  unsigned char currentBrightness = 0;
   while(active)
   {
+    const unsigned char brightnessCopy = brightness; //to avoid race condition
+    if(currentBrightness != brightnessCopy)
+    {
+      currentBrightness = brightnessCopy;
+      pLight->setBrightness(brightnessCopy);
+    }
     const unsigned char r = rand() % 255;
     const unsigned char g = rand() % 255;
     const unsigned char b = rand() % 255;

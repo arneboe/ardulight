@@ -32,6 +32,7 @@ private: //attributes
   int speed;
   QMutex threadActive;
   QWidgetAction* pWidget;
+  unsigned char brightness; //the brightness that should be set
 
 
 };
