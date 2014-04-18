@@ -17,7 +17,12 @@ private:
 
   /**Display all controllers that are active */
   void updateMenuEntires();
+  void activateController(const int controllerIndex);
+private slots:
+  void brightnessChanged(int newBrightness);
 
+private:
   std::vector<std::unique_ptr<LightController> > controllers;
   QAction * quitAction;
+  int activeController; /**< Index of the currently active controller */
 };

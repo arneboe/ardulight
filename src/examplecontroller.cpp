@@ -4,7 +4,7 @@
 #include <cstdlib>
 #include <QSlider>
 #include <QLabel>
-#include <QVBoxLayout>
+#include <QHBoxLayout>
 #include <QWidget>
 #include <QWidgetAction>
 
@@ -17,7 +17,7 @@ ExampleController::ExampleController(std::shared_ptr<Light> light) :
   slider->setMaximum(1000);
   slider->setValue(speed);
   QLabel* label = new QLabel("Speed", nullptr);
-  QVBoxLayout* layout = new QVBoxLayout(nullptr);
+  QHBoxLayout* layout = new QHBoxLayout(nullptr);
   layout->addWidget(label);
   layout->addWidget(slider);
   QWidget* widget = new QWidget(nullptr);
