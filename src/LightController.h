@@ -1,5 +1,5 @@
 #pragma once
-
+#include <memory>
 class Light;
 class QWidgetAction;
 /**
@@ -8,12 +8,15 @@ class QWidgetAction;
 class LightController
 {
 public:
-  LightController(Light* light) : pLight(light){}
+  LightController(std::shared_ptr<Light> light) : pLight(light){}
 
   /**
    * Start execution of this light controller.
    * This method should never block.
    * Once a controller is active it is allowed to control the light.
+   *
+   * @note The light might be owned by a different thread. The controller
+   *       should move it to the correct thread upon activation.
    */
   virtual void activate() = 0;
 
@@ -30,6 +33,15 @@ public:
   virtual bool isActive() const = 0;
 
   /**
+   * Sets the brightness of the light.
+   * This method is called when this controller is active and the user wants
+   * to change the brightness. It is the responsibility of the controller to
+   * forward the command to the light because the light may only be controlled
+   * by one controller at a time.
+   */
+  virtual void setBrightness(const unsigned char value) = 0;
+
+  /**
    * While active this widget is shown in the tray menu.
    * It can be used to configure the controller. 
    */
@@ -39,5 +51,5 @@ public:
   }
 
 protected:
-  Light* pLight; /**<The light that is controlled by this controller */
+  std::shared_ptr<Light> pLight; /**<The light that is controlled by this controller */
 };

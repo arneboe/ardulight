@@ -3,17 +3,17 @@
 #include <QWidgetAction>
 #include "light.h"
 #include "LightController.h"
-#include "BrightnessController.h"
-TrayMenu::TrayMenu(Light* light, QWidget* parent) :
+#include "examplecontroller.h"
+TrayMenu::TrayMenu(std::shared_ptr<Light> light, QWidget* parent) :
   QMenu(parent), quitAction(new QAction("Quit", this))
 {
   //FIXME this should not be connected to qApp.quit(). Instead it should
   //invoke a local slot which cleans up before quitting.
   connect(quitAction, SIGNAL(triggered()),qApp,SLOT(quit()));
 
-  std::unique_ptr<LightController> brightness((LightController*) new BrightnessController(light));
+  std::unique_ptr<LightController> example((LightController*) new ExampleController(light));
 
-  controllers.push_back(std::move(brightness));
+  controllers.push_back(std::move(example));
   controllers.back()->activate(); //brightness controll is always active
 
   //add all actions

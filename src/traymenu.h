@@ -11,7 +11,7 @@ class TrayMenu : public QMenu
 {
   Q_OBJECT
 public:
-  explicit TrayMenu(Light* light, QWidget* parent = NULL);
+  explicit TrayMenu(std::shared_ptr<Light> light, QWidget* parent = NULL);
 
 private:
 

@@ -16,8 +16,7 @@ SOURCES += main.cpp \
     light.cpp \
     global.cpp \
     traymenu.cpp \
-    ambilightmode.cpp \
-    BrightnessController.cpp
+    examplecontroller.cpp
 
 HEADERS += Screen.h \
     light.h \
@@ -25,9 +24,8 @@ HEADERS += Screen.h \
     protocol.h \
     traymenu.h \
     imode.h \
-    ambilightmode.h \
     LightController.h \
-    BrightnessController.h
+    examplecontroller.h
 HEADERS += d3d9.h
 HEADERS += d3dx9.h
 HEADERS += d3dx9d.h
