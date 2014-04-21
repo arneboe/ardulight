@@ -84,7 +84,7 @@ bool Screen::initD3D(int deviceNum) {
   return true;
 }
 
-void Screen::getScreenBitmap(Pixel* pOutData) const {
+void Screen::getScreenBitmap(unsigned int* pOutData) const {
 
   pd3dDevice->GetFrontBufferData(0, pSurface);
   D3DLOCKED_RECT lockedRect;

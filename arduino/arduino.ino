@@ -33,7 +33,7 @@ void setup()
 {
   commandHandlers[SET_COLOR] = handleSetColor;
   commandHandlers[SET_BRIGHTNESS] = handleSetBrightness;
-  Serial.begin(115200, SERIAL_8N1);
+  Serial.begin(115200);
   strip.begin();
   strip.setBrightness(255);
   //flash once to indicate reset

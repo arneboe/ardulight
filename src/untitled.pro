@@ -16,16 +16,17 @@ SOURCES += main.cpp \
     light.cpp \
     global.cpp \
     traymenu.cpp \
-    examplecontroller.cpp
+    examplecontroller.cpp \
+    desktopcontroller.cpp
 
 HEADERS += Screen.h \
     light.h \
     global.h \
     protocol.h \
     traymenu.h \
-    imode.h \
     LightController.h \
-    examplecontroller.h
+    examplecontroller.h \
+    desktopcontroller.h
 HEADERS += d3d9.h
 HEADERS += d3dx9.h
 HEADERS += d3dx9d.h

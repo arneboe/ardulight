@@ -16,14 +16,19 @@ Light::Light() : lastShowTimestamp(0), port(this)
     qFatal("Unable to open serial port");
     exit(1); //FIXME this is bad style :D
   }
-  if(!port.setParity(QSerialPort::NoParity) &&
-     !port.setStopBits(QSerialPort::OneStop) &&
-     !port.setDataBits(QSerialPort::Data8) &&
-     !port.setFlowControl(QSerialPort::NoFlowControl ) &&
-     !port.setBaudRate(baud))
+  if(!port.setParity(QSerialPort::NoParity) ||
+     !port.setStopBits(QSerialPort::OneStop) ||
+     !port.setDataBits(QSerialPort::Data8) ||
+     !port.setFlowControl(QSerialPort::NoFlowControl ) ||
+     !port.setBaudRate(baud) ||
+     !port.setDataTerminalReady(true))
   {
      qFatal("Unable to configure serial port");
      exit(1); //FIXME baaad
+  }
+  if(port.error() != QSerialPort::NoError)
+  {
+    qFatal("some error occurred!");
   }
 }
 

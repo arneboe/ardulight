@@ -11,8 +11,6 @@ struct IDirect3DSurface9;
 class Screen
 {
 public:
-  typedef unsigned int Pixel;
-
 
   Screen();
   ~Screen();
@@ -23,7 +21,7 @@ public:
    * @param pOutData a pointer to a block of memory that is at least screenWidth*screenHeight*sizeof(Screen::Pixel) bytes large.
    *                 Pixel format is A8R8G8B8.
    */
-  void getScreenBitmap(Pixel* pOutData) const;
+  void getScreenBitmap(unsigned int* pOutData) const;
 
   /**Returns the width of the screen */
   int getWidth() const;

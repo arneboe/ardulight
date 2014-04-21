@@ -31,9 +31,12 @@ ExampleController::ExampleController(std::shared_ptr<Light> light) :
 
 void ExampleController::activate()
 {
-  pLight->moveToThread(this); //take ownership of the light
-  active = true;
-  QThread::start();
+  if(!active)
+  {
+    pLight->moveToThread(this); //take ownership of the light
+    active = true;
+    QThread::start();
+  }
 }
 
 void ExampleController::deactivate()

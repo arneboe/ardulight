@@ -4,6 +4,7 @@
 #include "light.h"
 #include "LightController.h"
 #include "examplecontroller.h"
+#include "desktopcontroller.h"
 #include <QWidget>
 #include <QSlider>
 #include <QLabel>
@@ -15,8 +16,10 @@ TrayMenu::TrayMenu(std::shared_ptr<Light> light, QWidget* parent) :
   //invoke a local slot which cleans up before quitting.
   connect(quitAction, SIGNAL(triggered()),qApp,SLOT(quit()));
 
-  std::unique_ptr<LightController> example((LightController*) new ExampleController(light));
+  std::unique_ptr<LightController> desktop((LightController*) new DesktopController(light));
+  controllers.push_back(std::move(desktop));
 
+  std::unique_ptr<LightController> example((LightController*) new ExampleController(light));
   controllers.push_back(std::move(example));
 
   //populate the controller selection submenu
