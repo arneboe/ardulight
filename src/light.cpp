@@ -121,7 +121,6 @@ Light::~Light()
 
 void Light::setBrightness(const int brightness)
 {
-  qWarning("set brightness %d", brightness);
   Q_ASSERT(brightness >= 0);
   Q_ASSERT(brightness <= 255);
   QByteArray data;
