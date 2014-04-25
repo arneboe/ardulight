@@ -5,16 +5,22 @@
 #include "LightController.h"
 #include "examplecontroller.h"
 #include "desktopcontroller.h"
+#include "colorpickercontroller.h"
 #include <QWidget>
 #include <QSlider>
 #include <QLabel>
 #include <QHBoxLayout>
+
 TrayMenu::TrayMenu(std::shared_ptr<Light> light, QWidget* parent) :
   QMenu(parent), quitAction(new QAction("Quit", this)), activeController(-1)
 {
   //FIXME this should not be connected to qApp.quit(). Instead it should
   //invoke a local slot which cleans up before quitting.
   connect(quitAction, SIGNAL(triggered()),qApp,SLOT(quit()));
+
+
+  std::unique_ptr<LightController> color((LightController*) new ColorPickerController(light));
+  controllers.push_back(std::move(color));
 
   std::unique_ptr<LightController> desktop((LightController*) new DesktopController(light));
   controllers.push_back(std::move(desktop));

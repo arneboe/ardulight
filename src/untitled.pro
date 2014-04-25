@@ -17,7 +17,8 @@ SOURCES += main.cpp \
     global.cpp \
     traymenu.cpp \
     examplecontroller.cpp \
-    desktopcontroller.cpp
+    desktopcontroller.cpp \
+    colorpickercontroller.cpp
 
 HEADERS += Screen.h \
     light.h \
@@ -26,7 +27,8 @@ HEADERS += Screen.h \
     traymenu.h \
     LightController.h \
     examplecontroller.h \
-    desktopcontroller.h
+    desktopcontroller.h \
+    colorpickercontroller.h
 HEADERS += d3d9.h
 HEADERS += d3dx9.h
 HEADERS += d3dx9d.h
