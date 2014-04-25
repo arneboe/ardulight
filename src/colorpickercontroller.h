@@ -40,7 +40,7 @@ private:
   bool active;
   QWidgetAction* pWidget;
   QMutex threadActive;
-  QColor color;
+  QColor color;//when active this variable is monitored by the thread and any change is transmitted to the light
   QColor oldColor;//Is used to reset the color if the user clicks 'cancel' in the dialog
   QColorDialog* pPicker;
 };
