@@ -3,12 +3,28 @@
 #include <QThread>
 #include <QMutex>
 #include <QColor>
+#include <QSemaphore>
 
 class QColorDialog;
 
 /**
  * Lets the user set the color manually using a color picker
  * with live preview.
+ *
+ * Concept:
+ * The worker thread is sleeping on a semaphore.
+ * Everytime the user picks a new color the attribute 'color' is updated.
+ * Afterwards the sema is released and the worker thread sends the new color
+ * to the light.
+ *
+ * @note
+ *   The race condition between setting the color and sending it to the light
+ *   is ignored because the user generally only cares about the last color.
+ *
+ *   Due to the race condition we might occasionally send the same color
+ *   multiple times but that doesnt matter because this controller is not
+ *   performance critical and simple clean code is more important than a little
+ *   useless traffic on the bus :)
  */
 class ColorPickerController : public QThread, LightController
 {
@@ -36,11 +52,14 @@ private slots:
 
 private:
   void run();
+  /*Sets the color and wakes up the worker thread */
+  void setColor(const QColor& col);
 
   bool active;
   QWidgetAction* pWidget;
-  QMutex threadActive;
+  QMutex threadActive;//is locked while the thread is active
   QColor color;//when active this variable is monitored by the thread and any change is transmitted to the light
   QColor oldColor;//Is used to reset the color if the user clicks 'cancel' in the dialog
-  QColorDialog* pPicker;
+  QColorDialog* pPicker;//The color picker dialog that is used
+  QSemaphore signalColorChanged; //used to wake up the worker thread when the color changes
 };

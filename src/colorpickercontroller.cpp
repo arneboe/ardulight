@@ -35,6 +35,7 @@ void ColorPickerController::activate()
 void ColorPickerController::deactivate()
 {
   active = false;
+  signalColorChanged.release();//wake up thread
   QMutexLocker ml(&threadActive);//wait for the run method to finish
 }
 
@@ -69,12 +70,14 @@ void ColorPickerController::colorChanged(const QColor& col)
   if(active)
   {
     color = col;
+    signalColorChanged.release();//tell thread that the color changed
   }
 }
 
 void ColorPickerController::colorRejected()
 {
   color = oldColor;
+  signalColorChanged.release();
 }
 
 void ColorPickerController::run()
@@ -84,15 +87,19 @@ void ColorPickerController::run()
 
   while(active)
   {
-    QColor tempColor = color; //copy to avoid race condition
-    if(tempColor != currentColor)
-    {
-      currentColor = tempColor;
+    signalColorChanged.acquire();//wait for color changed
+    //note: If the user sets multiple colors in short time intervals
+    //      we are going to miss some of them.
+    //      However that does not matter because the user is only interested
+    //      in the last color :)
+    if(active)
+    {//This check is necessary because the sema will also be released when
+     //stopping the thread.
+      QColor tempColor = color; //copy to avoid mixing two consectuive colors :)
       pLight->setAllColors((unsigned char) tempColor.red(),
                            (unsigned char) tempColor.green(),
                            (unsigned char) tempColor.blue());
       pLight->sendColors();
     }
-    QThread::msleep(30);
   }
 }
