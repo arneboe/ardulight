@@ -1,9 +1,9 @@
 ﻿#include <QApplication>
 #include <QSettings>
-#include "global.h"
-#include "light.h"
+#include "Global.h"
+#include "Light.h"
 #include <QSystemTrayIcon>
-#include "traymenu.h"
+#include "TrayMenu.h"
 #include <memory>
 
 int main(int argc, char *argv[])

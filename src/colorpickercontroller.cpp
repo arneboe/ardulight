@@ -1,10 +1,10 @@
-#include "colorpickercontroller.h"
+#include "ColorPickerController.h"
 #include <QWidget>
 #include <QWidgetAction>
 #include <QPushButton>
 #include <QColorDialog>
 #include <QColor>
-#include "light.h"
+#include "Light.h"
 #include <QThread>
 #include <QMutexLocker>
 

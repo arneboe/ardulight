@@ -1,6 +1,6 @@
-#include "examplecontroller.h"
+#include "ExampleController.h"
 #include <QMutexLocker>
-#include "light.h"
+#include "Light.h"
 #include <cstdlib>
 #include <QSlider>
 #include <QLabel>

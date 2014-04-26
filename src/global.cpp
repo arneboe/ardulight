@@ -1,4 +1,4 @@
-#include "global.h"
+#include "Global.h"
 #include <QApplication>
 Global::Global() : settings("config.ini", QSettings::IniFormat)
 {}

@@ -1,11 +1,11 @@
-#include "traymenu.h"
+#include "TrayMenu.h"
 #include <QAction>
 #include <QWidgetAction>
-#include "light.h"
+#include "Light.h"
 #include "LightController.h"
-#include "examplecontroller.h"
-#include "desktopcontroller.h"
-#include "colorpickercontroller.h"
+#include "ExampleController.h"
+#include "DesktopController.h"
+#include "ColorPickerController.h"
 #include <QWidget>
 #include <QSlider>
 #include <QLabel>

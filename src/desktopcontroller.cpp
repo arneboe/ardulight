@@ -1,8 +1,8 @@
-#include "desktopcontroller.h"
+#include "DesktopController.h"
 #include <QMutexLocker>
 #include <QWidgetAction>
 #include "Screen.h"
-#include "light.h"
+#include "Light.h"
 
 DesktopController::DesktopController(std::shared_ptr<Light> light) :
   LightController(light, "Ambilight"), active(false), brightness(255)

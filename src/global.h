@@ -1,9 +1,10 @@
 #pragma once
+#include <QSettings>
+
 /**
  * @brief Contains some static stuff that needs to be available globally
  *        i.e. settings.
  */
-#include <QSettings>
 class Global
 {
   //see http://stackoverflow.com/questions/1008019/c-singleton-design-pattern/1008289#1008289

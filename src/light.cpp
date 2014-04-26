@@ -1,5 +1,5 @@
-#include "light.h"
-#include "global.h"
+#include "Light.h"
+#include "Global.h"
 #include <QObject>
 #include "../arduino/protocol.h"
 #include <QMutexLocker>
