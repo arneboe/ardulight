@@ -7,8 +7,8 @@
 
 Light::Light() : lastShowTimestamp(0), port(this)
 {
-  const qint32 baud = Global::getInstance().getSettings().value("Hardware/baudRate", 115200).toInt();
-  const QString portName = Global::getInstance().getSettings().value("Hardware/port", "COM3").toString();
+  const qint32 baud = Global::getInstance().getSettings().value("Hardware/BaudRate", 115200).toInt();
+  const QString portName = Global::getInstance().getSettings().value("Hardware/Port", "COM3").toString();
   port.setPortName(portName);
 
   if(!port.open(QIODevice::ReadWrite))

@@ -4,8 +4,10 @@
 #include <QMutex>
 #include <QColor>
 #include <QSemaphore>
+#include <QString>
 
 class QColorDialog;
+class QSettings;
 
 /**
  * Lets the user set the color manually using a color picker
@@ -50,6 +52,10 @@ private slots:
    *Resets the color back to its original state*/
   void colorRejected();
 
+  /*Called when the user hits "ok".
+   *Saves the new color to the settings*/
+  void colorAccepted();
+
 private:
   void run();
   /*Sets the color and wakes up the worker thread */
@@ -61,4 +67,10 @@ private:
   QColor oldColor;//Is used to reset the color if the user clicks 'cancel' in the dialog
   QColorDialog* pPicker;//The color picker dialog that is used
   QSemaphore signalColorChanged; //used to wake up the worker thread when the color changes
+
+
+  QSettings& settings;
+  const QString redSetting;
+  const QString greenSetting;
+  const QString blueSetting;
 };

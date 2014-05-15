@@ -7,14 +7,25 @@
 #include "Light.h"
 #include <QThread>
 #include <QMutexLocker>
+#include "Global.h"
 
 ColorPickerController::ColorPickerController(std::shared_ptr<Light> light)
   : LightController(light, "Color Picker"), active(false),
-    color("red")//FIXME should be loaded from file
+    color("red"),//if it remains red something went wrong :D
+    settings(Global::getInstance().getSettings()),
+    redSetting("Controller/ColorPicker/Color/Red"),
+    greenSetting("Controller/ColorPicker/Color/Green"),
+    blueSetting("Controller/ColorPicker/Color/Blue")
 {
+  const int red = settings.value(redSetting, 255).toInt();
+  const int green = settings.value(greenSetting, 255).toInt();
+  const int blue  = settings.value(blueSetting, 255).toInt();
+  color.setRgb(red, green, blue);
+
   pPicker = new QColorDialog();
   connect(pPicker, SIGNAL(currentColorChanged(QColor)), this, SLOT(colorChanged(QColor)));
   connect(pPicker, SIGNAL(rejected()), this, SLOT(colorRejected()));
+  connect(pPicker, SIGNAL(accepted()), this, SLOT(colorAccepted()));
 }
 
 void ColorPickerController::activate()
@@ -24,6 +35,8 @@ void ColorPickerController::activate()
     pLight->moveToThread(this);
     active = true;
     QThread::start();
+    //signal once to set the last known color
+    signalColorChanged.release();
   }
 }
 
@@ -77,6 +90,13 @@ void ColorPickerController::colorRejected()
 {
   color = oldColor;
   signalColorChanged.release();
+}
+
+void ColorPickerController::colorAccepted()
+{
+  settings.setValue(redSetting, color.red());
+  settings.setValue(greenSetting, color.green());
+  settings.setValue(blueSetting, color.blue());
 }
 
 void ColorPickerController::run()
