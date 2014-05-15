@@ -108,7 +108,7 @@ void DesktopController::generateRegions(std::vector<Region>& regions, const int 
   //FIXME this should be loaded from config file
   regions.clear();
 
-  const int regionWidth = 50; //FIXME parameter
+  const int regionWidth = 120; //FIXME parameter
   const int resX = screenWidth;
   const int resY = screenHeight;
   const int horTotalWidth = resX - 2 * regionWidth;

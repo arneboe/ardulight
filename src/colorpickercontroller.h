@@ -56,7 +56,6 @@ private:
   void setColor(const QColor& col);
 
   bool active;
-  QWidgetAction* pWidget;
   QMutex threadActive;//is locked while the thread is active
   QColor color;//when active this variable is monitored by the thread and any change is transmitted to the light
   QColor oldColor;//Is used to reset the color if the user clicks 'cancel' in the dialog

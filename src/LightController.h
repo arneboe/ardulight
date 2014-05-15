@@ -51,6 +51,8 @@ public:
   /**
    * While active this widget is shown in the tray menu.
    * It can be used to configure the controller. 
+   * @note Always return a new (!!!) object from this method.
+   *       It will be destroyed when the controller is deactivated.
    */
   virtual QWidgetAction* getMenuWidget()
   {

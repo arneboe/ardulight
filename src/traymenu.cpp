@@ -45,17 +45,6 @@ TrayMenu::TrayMenu(std::shared_ptr<Light> light, QWidget* parent) :
 
   this->addSeparator();
 
-  //add all actions
-  for(const std::unique_ptr<LightController>& controller : controllers)
-  {
-    QWidgetAction* ctrlAction = controller->getMenuWidget();
-    if(nullptr != ctrlAction)
-    {
-      this->addAction(ctrlAction);
-      ctrlAction->setVisible(false);
-    }
-  }
-
   //set brightness action
   QSlider* brightnessSlider = new QSlider(nullptr);
   brightnessSlider->setOrientation(Qt::Horizontal);
@@ -88,11 +77,13 @@ void TrayMenu::activateController(const int controllerIndex)
   if(activeController != -1)//is -1 if there has never been an active controller
   {
     controllers[activeController]->deactivate();
-    controllers[activeController]->getMenuWidget()->setVisible(false);
+    this->removeAction(this->actions()[0]);//0 is the topmost action, i.e. the action of the old controller
+    //TODO remove old action
   }
   activeController = controllerIndex;
   controllers[controllerIndex]->activate();
-  controllers[controllerIndex]->getMenuWidget()->setVisible(true);
+  Q_ASSERT(this->actions().size() > 0);
+  this->insertAction( this->actions()[0], controllers[controllerIndex]->getMenuWidget());
 }
 
 void TrayMenu::brightnessChanged(int newBrightness)

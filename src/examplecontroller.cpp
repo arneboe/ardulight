@@ -11,22 +11,7 @@
 ExampleController::ExampleController(std::shared_ptr<Light> light) :
   LightController(light, "Example"), active(false), speed(500), brightness(255)
 {
-  QSlider* slider = new QSlider(nullptr);
-  slider->setOrientation(Qt::Horizontal);
-  slider->setMinimum(100);
-  slider->setMaximum(1000);
-  slider->setValue(speed);
-  QLabel* label = new QLabel("Speed", nullptr);
-  QHBoxLayout* layout = new QHBoxLayout(nullptr);
-  layout->addWidget(label);
-  layout->addWidget(slider);
-  QWidget* widget = new QWidget(nullptr);
-  widget->setLayout(layout);
-  pWidget = new QWidgetAction(nullptr);
-  pWidget->setDefaultWidget(widget);
 
-  connect(slider, SIGNAL(valueChanged(int)),
-                    this, SLOT(speedChanged(int)));
 }
 
 void ExampleController::activate()
@@ -57,8 +42,23 @@ void ExampleController::setBrightness(const unsigned char value)
 
 QWidgetAction *ExampleController::getMenuWidget()
 {
-  Q_ASSERT(nullptr != pWidget);
-  return pWidget;
+  QSlider* slider = new QSlider(nullptr);
+  slider->setOrientation(Qt::Horizontal);
+  slider->setMinimum(100);
+  slider->setMaximum(1000);
+  slider->setValue(speed);
+  QLabel* label = new QLabel("Speed", nullptr);
+  QHBoxLayout* layout = new QHBoxLayout(nullptr);
+  layout->addWidget(label);
+  layout->addWidget(slider);
+  QWidget* widget = new QWidget(nullptr);
+  widget->setLayout(layout);
+  QWidgetAction* action = new QWidgetAction(nullptr);
+  action->setDefaultWidget(widget);
+
+  connect(slider, SIGNAL(valueChanged(int)),
+                    this, SLOT(speedChanged(int)));
+  return action;
 }
 
 void ExampleController::speedChanged(int newSpeed)

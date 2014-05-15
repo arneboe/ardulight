@@ -3,8 +3,6 @@
 #include <QThread>
 #include <QMutex>
 
-class QWidgetAction;
-
 /**
  * @brief A simple light controller that blinks randomly
  */
@@ -31,7 +29,6 @@ private: //attributes
   bool active;
   int speed;
   QMutex threadActive;
-  QWidgetAction* pWidget;
   unsigned char brightness; //the brightness that should be set
 
 

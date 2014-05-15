@@ -12,11 +12,6 @@ ColorPickerController::ColorPickerController(std::shared_ptr<Light> light)
   : LightController(light, "Color Picker"), active(false),
     color("red")//FIXME should be loaded from file
 {
-  QPushButton* button = new QPushButton("Pick color");
-  connect(button, SIGNAL(clicked(bool)), this, SLOT(buttonClicked(bool)));
-
-  pWidget = new QWidgetAction(nullptr);
-  pWidget->setDefaultWidget(button);
   pPicker = new QColorDialog();
   connect(pPicker, SIGNAL(currentColorChanged(QColor)), this, SLOT(colorChanged(QColor)));
   connect(pPicker, SIGNAL(rejected()), this, SLOT(colorRejected()));
@@ -52,8 +47,12 @@ void ColorPickerController::setBrightness(const unsigned char value)
 
 QWidgetAction *ColorPickerController::getMenuWidget()
 {
-  Q_ASSERT(nullptr != pWidget);
-  return pWidget;
+  QPushButton* button = new QPushButton("Pick color");
+  connect(button, SIGNAL(clicked(bool)), this, SLOT(buttonClicked(bool)));
+
+  QWidgetAction* widget = new QWidgetAction(nullptr);
+  widget->setDefaultWidget(button);
+  return widget;
 }
 
 void ColorPickerController::buttonClicked(bool)
