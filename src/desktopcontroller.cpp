@@ -51,16 +51,17 @@ void DesktopController::run()
   screen.initialize(0); //FIXME load from settings
   //FIXME initialize() can fail(returns a boolean)
   //FIXME this works as long as the pixel format from Screen is always ARGB
-  QRgb* buffer = new QRgb[screen.getHeight() * screen.getWidth()];
+  std::vector<QRgb> buffer;
+  buffer.resize(screen.getHeight() * screen.getWidth());
   std::vector<Region> regions;
   generateRegions(regions, screen.getWidth(), screen.getHeight());
 
   while(active)
   {
-    screen.getScreenBitmap(buffer);
+    screen.getScreenBitmap(buffer.data());
     for(const Region& region : regions)
     {
-      const QRgb avg = getAvgOfRegion(region.rect, buffer, screen.getWidth());
+      const QRgb avg = getAvgOfRegion(region.rect, buffer.data(), screen.getWidth());
       pLight->setColor(region.ledIndex, qRed(avg), qGreen(avg), qBlue(avg));
     }
     pLight->sendColors();
@@ -74,7 +75,6 @@ void DesktopController::run()
 
     QThread::msleep(5);
   }
-  delete buffer; //FIXME use scoped destruction
 }
 
 QRgb DesktopController::getAvgOfRegion(const QRect& region, QRgb* pBuffer, const int screenWidth) const
