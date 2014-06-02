@@ -36,3 +36,9 @@ win32:LIBS += -ld3d9 #-ld3dx9 -ld3dx9d
 
 RESOURCES += \
     resources.qrc
+
+Debug:DESTDIR = ../debug
+Debug:OBJECTS_DIR = ../debug/.obj
+Debug:MOC_DIR = ../debug/.moc
+Debug:RCC_DIR = ../debug/.rcc
+Debug:UI_DIR = ../debug/.ui

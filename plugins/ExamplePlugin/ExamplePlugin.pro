@@ -17,3 +17,11 @@ HEADERS += ExampleController.h
 INCLUDEPATH += ../../src
 
 QMAKE_CXXFLAGS += -std=c++11
+
+
+
+Debug:DESTDIR = ../../debug/plugins
+Debug:OBJECTS_DIR = ../../debug/.obj
+Debug:MOC_DIR = ../../debug/.moc
+Debug:RCC_DIR = ../../debug/.rcc
+Debug:UI_DIR = ../../debug/.ui
