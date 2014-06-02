@@ -9,6 +9,7 @@
 class Light;
 class QRect;
 class Pixel;
+class QSettings;
 /**
  * Mirrors the desktop border colors
  */
@@ -36,5 +37,17 @@ private:
   bool active;
   QMutex threadActive;
   unsigned char brightness; //the brightness that should be set
+
+  QSettings& settings;
+  const QString refreshRateSetting;
+  const QString bottomLeftSetting;
+  const QString bottomRightSetting;
+  const QString leftBottomSetting;
+  const QString leftTopSetting;
+  const QString topLeftSetting;
+  const QString topRightSetting;
+  const QString rightBottomSetting;
+  const QString rightTopSetting;
+  const QString thicknessSetting;
 };
 

@@ -68,7 +68,6 @@ private:
   QColorDialog* pPicker;//The color picker dialog that is used
   QSemaphore signalColorChanged; //used to wake up the worker thread when the color changes
 
-
   QSettings& settings;
   const QString redSetting;
   const QString greenSetting;

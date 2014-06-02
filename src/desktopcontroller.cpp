@@ -3,9 +3,22 @@
 #include <QWidgetAction>
 #include "Screen.h"
 #include "Light.h"
+#include "Global.h"
+#include <QDebug>
 
 DesktopController::DesktopController(std::shared_ptr<Light> light) :
-  LightController(light, "Ambilight"), active(false), brightness(255)
+  LightController(light, "Ambilight"), active(false), brightness(255),
+  settings(Global::getInstance().getSettings()),
+  refreshRateSetting("Controller/Desktop/RefreshRate"),
+  bottomLeftSetting("Controller/Desktop/Leds/BottomLeft"),
+  bottomRightSetting("Controller/Desktop/Leds/BottomRight"),
+  leftBottomSetting("Controller/Desktop/Leds/LeftBottom"),
+  leftTopSetting("Controller/Desktop/Leds/leftTop"),
+  topLeftSetting("Controller/Desktop/Leds/TopLeft"),
+  topRightSetting("Controller/Desktop/Leds/TopRight"),
+  rightBottomSetting("Controller/Desktop/Leds/RightBottom"),
+  rightTopSetting("Controller/Desktop/Leds/RightTop"),
+  thicknessSetting("Controller/Desktop/Leds/RegionThickness")
 {
 }
 
@@ -73,7 +86,7 @@ void DesktopController::run()
       pLight->setBrightness(tempBrightness);
     }
 
-    QThread::msleep(5);
+    QThread::msleep(5); //FIXME use refreshRate from settings
   }
 }
 
@@ -84,7 +97,7 @@ QRgb DesktopController::getAvgOfRegion(const QRect& region, QRgb* pBuffer, const
   unsigned long avgB = 0;
   const int width = screenWidth;
   for(int y = region.top(); y < region.bottom(); ++y)
-  { //FIXME pBuffer should be a parameter
+  {
     for(int x = region.left(); x < region.right(); ++x)
     {
       QRgb p = pBuffer[width * y + x];
@@ -105,61 +118,54 @@ QRgb DesktopController::getAvgOfRegion(const QRect& region, QRgb* pBuffer, const
 
 void DesktopController::generateRegions(std::vector<Region>& regions, const int screenWidth, const int screenHeight) const
 {
-  //FIXME this should be loaded from config file
+  //FIXME this method contains a lot of duplicate code
   regions.clear();
 
-  const int regionWidth = 120; //FIXME parameter
-  const int resX = screenWidth;
   const int resY = screenHeight;
-  const int horTotalWidth = resX - 2 * regionWidth;
-  const int horRegionCount = 20; //FIXME parameter
-  const int horRegionWidth = horTotalWidth / horRegionCount;
-  const int vertTotalWidth = resY - 2 * regionWidth;
-  const int vertRegionCount = 10;
-  const int vertRegionWidth = vertTotalWidth / vertRegionCount;
-
-  //top regions
-  for(int rIndex = 30, i = 0; i < horRegionCount; ++i, ++rIndex) //FIXME hard coded led index
-  {
-    const int regionX = regionWidth + i * horRegionWidth;
-    const int regionY = 0;
-    Region r;
-    r.ledIndex = rIndex;
-    r.rect = QRect(regionX, regionY, horRegionWidth, regionWidth);
-    regions.push_back(r);
-  }
-
-  //bottom regions
-  for(int rIndex = 19, i = 0; i < horRegionCount; ++i, --rIndex)//FIXME hard coded led index
-  {
-    const int regionX = regionWidth + i * horRegionWidth;
-    const int regionY = resY - regionWidth;
-    Region r;
-    r.ledIndex = rIndex;
-    r.rect = QRect(regionX, regionY, horRegionWidth, regionWidth);
-    regions.push_back(r);
-  }
+  const int regionThickness = settings.value(thicknessSetting, 120).toInt();
 
   //left regions
-  for(int rIndex = 29, i = 0; i < vertRegionCount; ++i, --rIndex)//FIXME hard coded led index
+  const int leftBottomIndex = settings.value(leftBottomSetting, 0).toInt();
+  const int leftTopIndex = settings.value(leftTopSetting, 0).toInt();
+  const int numLeftLeds = abs(leftBottomIndex - leftTopIndex) + 1; //+1 because both indices are inclusive
+  const int pixelsPerLeftLed = resY / numLeftLeds;
+  //the amout of pixels that will be skipped at the top and bottom if resY is not
+  //divisable by numLeftLeds.
+  const int halfRestPixelsLeft = (resY % numLeftLeds) / 2;
+  const int leftIndexDirection = leftTopIndex > leftBottomIndex ? -1 : 1;
+
+  for(int i = 0, ledIndex = leftTopIndex; i < numLeftLeds; ++i, ledIndex += leftIndexDirection)
   {
     const int regionX = 0;
-    const int regionY = regionWidth + i * vertRegionWidth;
+    const int regionY = halfRestPixelsLeft + i * pixelsPerLeftLed;
     Region r;
-    r.ledIndex = rIndex;
-    r.rect = QRect(regionX, regionY, regionWidth, vertRegionWidth);
+    r.ledIndex = ledIndex;
+    r.rect = QRect(regionX, regionY, regionThickness, pixelsPerLeftLed);
     regions.push_back(r);
+    qDebug() << "LED " << r.ledIndex << ": x = " << regionX << ", y = " << regionY <<
+                ", w = " << regionThickness << ", h = " << pixelsPerLeftLed;
   }
 
+
   //right regions
-  for(int rIndex = 50, i = 0; i < vertRegionCount; ++i, ++rIndex)//FIXME hard coded led index
+  const int rightBottomIndex = settings.value(rightBottomSetting, 0).toInt();
+  const int rightTopIndex = settings.value(rightTopSetting, 0).toInt();
+  const int numRightLeds = abs(rightBottomIndex - rightTopIndex) + 1; //+1 because both indices are inclusive
+  const int pixelsPerRightLed = resY / numRightLeds;
+  const int halfRestPixelsRight = (resY % numRightLeds) / 2;
+  const int rightIndexDirection = rightTopIndex > rightBottomIndex ? -1 : 1;
+
+  for(int i = 0, ledIndex = rightTopIndex; i < numRightLeds; ++i, ledIndex += rightIndexDirection)
   {
-    const int regionX = resX - regionWidth;
-    const int regionY = regionWidth + i * vertRegionWidth;
+    const int regionX = screenWidth - regionThickness;
+    const int regionY = halfRestPixelsRight + i * pixelsPerRightLed;
     Region r;
-    r.ledIndex = rIndex;
-    r.rect = QRect(regionX, regionY, regionWidth, vertRegionWidth);
+    r.ledIndex = ledIndex;
+    r.rect = QRect(regionX, regionY, regionThickness, pixelsPerRightLed);
     regions.push_back(r);
+    qDebug() << "LED " << r.ledIndex << ": x = " << regionX << ", y = " << regionY <<
+                ", w = " << regionThickness << ", h = " << pixelsPerLeftLed;
   }
+
 }
 
