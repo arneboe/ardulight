@@ -2,7 +2,7 @@
 #include <QApplication>
 #include <QDir>
 #include <QDebug>
-Global::Global() : settings(QDir(qApp->applicationDirPath()).absoluteFilePath("config.ini") , QSettings::IniFormat)
+Global::Global() : settings(QDir(qApp->applicationDirPath() + "/config").absoluteFilePath("config.ini") , QSettings::IniFormat)
 {
   qDebug() << "Loaded settings from: " << settings.fileName();
 }

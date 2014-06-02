@@ -12,13 +12,11 @@ TARGET = untitled
 TEMPLATE = app
 
 SOURCES += main.cpp \
-    Screen.cpp \
     Global.cpp \
     Light.cpp \
     TrayMenu.cpp
 
-HEADERS += Screen.h \
-    protocol.h \
+HEADERS += protocol.h \
     LightController.h \
     TrayMenu.h \
     Light.h \
@@ -28,11 +26,6 @@ HEADERS += Screen.h \
 HEADERS += d3d9.h
 HEADERS += d3dx9.h
 HEADERS += d3dx9d.h
-
-FORMS +=
-
-win32:LIBS += -ld3d9 #-ld3dx9 -ld3dx9d
-#win32:LIBS += -L"C:\\dx10sdk\\Lib\\x86" -ld3d9
 
 RESOURCES += \
     resources.qrc

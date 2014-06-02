@@ -14,10 +14,6 @@ ExampleController::ExampleController() :
 
 void ExampleController::activate(std::shared_ptr<ILight> pLight)
 {
-  if(nullptr == pLight.get())
-  {
-    qWarning() << "ExampleController::activate(): pLight is NULL";
-  }
   if(!active)
   {
     light = pLight;

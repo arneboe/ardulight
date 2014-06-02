@@ -140,7 +140,8 @@ void TrayMenu::loadPlugins()
     }
     else
     {
-      qWarning() << "Unable to load plugin: " << fileName;
+      qWarning() << "unable to load plugin " << fileName <<
+                    "Error: " << loader.errorString();
     }
   }
 }

@@ -2,31 +2,32 @@
 #include <QMutexLocker>
 #include <QWidgetAction>
 #include "Screen.h"
-#include "Light.h"
-#include "Global.h"
 #include <QDebug>
+#include <QApplication>
 
 DesktopController::DesktopController() :
   active(false), brightness(255),
-  settings(Global::getInstance().getSettings()),
-  refreshRateSetting("Controller/Desktop/RefreshRate"),
-  bottomLeftSetting("Controller/Desktop/Leds/BottomLeft"),
-  bottomRightSetting("Controller/Desktop/Leds/BottomRight"),
-  leftBottomSetting("Controller/Desktop/Leds/LeftBottom"),
-  leftTopSetting("Controller/Desktop/Leds/leftTop"),
-  topLeftSetting("Controller/Desktop/Leds/TopLeft"),
-  topRightSetting("Controller/Desktop/Leds/TopRight"),
-  rightBottomSetting("Controller/Desktop/Leds/RightBottom"),
-  rightTopSetting("Controller/Desktop/Leds/RightTop"),
-  thicknessSetting("Controller/Desktop/Leds/RegionThickness")
+  settings(QDir(qApp->applicationDirPath() + "/config").absoluteFilePath("AmbilightPlugin.ini"), QSettings::IniFormat),
+  refreshRateSetting("RefreshRate"),
+  bottomLeftSetting("Leds/BottomLeft"),
+  bottomRightSetting("Leds/BottomRight"),
+  leftBottomSetting("Leds/LeftBottom"),
+  leftTopSetting("Leds/leftTop"),
+  topLeftSetting("Leds/TopLeft"),
+  topRightSetting("Leds/TopRight"),
+  rightBottomSetting("Leds/RightBottom"),
+  rightTopSetting("Leds/RightTop"),
+  thicknessSetting("Leds/RegionThickness")
 {
 }
 
-void DesktopController::activate(std::shared_ptr<Light> pLight)
+void DesktopController::activate(std::shared_ptr<ILight> pLight)
 {
   if(!active)
   {
     light = pLight;
+    previousLightOwner = light->thread();
+    light->moveToThread(this);//This only works if the calling thread is the owner of light
     active = true;
     light->moveToThread(this); //take ownership of the light
     QThread::start();
@@ -94,6 +95,8 @@ void DesktopController::run()
 
     QThread::msleep(5); //FIXME use refreshRate from settings
   }
+  //move light back to original owner
+  light->moveToThread(previousLightOwner);
 }
 
 QRgb DesktopController::getAvgOfRegion(const QRect& region, QRgb* pBuffer, const int screenWidth) const

@@ -1,23 +1,26 @@
 #pragma once
-#include "LightController.h"
+#include <LightController.h>
 #include <QThread>
 #include <Memory>
 #include <QMutex>
 #include <QRgb>
 #include <QRect>
+#include <QtPlugin>
+#include <QSettings>
 
-class Light;
 class QRect;
 class Pixel;
-class QSettings;
 /**
  * Mirrors the desktop border colors
  */
 class DesktopController : public QThread, LightController
 {
+  Q_OBJECT
+  Q_PLUGIN_METADATA(IID LightController_iid)
+  Q_INTERFACES(LightController)
 public:
   DesktopController();
-  void activate(std::shared_ptr<Light> pLight);
+  void activate(std::shared_ptr<ILight> pLight);
   void deactivate();
   bool isActive() const;
   void setBrightness(const unsigned char value);
@@ -38,9 +41,10 @@ private:
   bool active;
   QMutex threadActive;
   unsigned char brightness; //the brightness that should be set
-  std::shared_ptr<Light> light;
+  std::shared_ptr<ILight> light;
+  QThread* previousLightOwner;
 
-  QSettings& settings;
+  QSettings settings;
   const QString refreshRateSetting;
   const QString bottomLeftSetting;
   const QString bottomRightSetting;
