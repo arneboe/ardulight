@@ -32,15 +32,16 @@ class ColorPickerController : public QThread, LightController
 {
    Q_OBJECT;
 public:
-  ColorPickerController(std::shared_ptr<Light> light);
+  ColorPickerController();
 
   // LightController interface
 public:
-  void activate();
+  void activate(std::shared_ptr<Light> pLight);
   void deactivate();
   bool isActive() const;
   void setBrightness(const unsigned char value);
   QWidgetAction *getMenuWidget();
+  QString getName();
 
 private slots:
   void buttonClicked(bool checked);
@@ -67,6 +68,7 @@ private:
   QColor oldColor;//Is used to reset the color if the user clicks 'cancel' in the dialog
   QColorDialog* pPicker;//The color picker dialog that is used
   QSemaphore signalColorChanged; //used to wake up the worker thread when the color changes
+  std::shared_ptr<Light> light;
 
   QSettings& settings;
   const QString redSetting;

@@ -9,8 +9,6 @@ class QWidgetAction;
 class LightController
 {
 public:
-  LightController(std::shared_ptr<Light> light, const QString& name) :
-    pLight(light), name(name){}
 
   /**
    * Start execution of this light controller.
@@ -20,7 +18,7 @@ public:
    * @note The light might be owned by a different thread. The controller
    *       should move it to the correct thread upon activation.
    */
-  virtual void activate() = 0;
+  virtual void activate(std::shared_ptr<Light> pLight) = 0;
 
   /**
    * Stop execution of this light controller.
@@ -43,10 +41,7 @@ public:
    */
   virtual void setBrightness(const unsigned char value) = 0;
 
-  virtual QString getName()
-  {
-    return name;
-  }
+  virtual QString getName()= 0;
 
   /**
    * While active this widget is shown in the tray menu.
@@ -54,12 +49,5 @@ public:
    * @note Always return a new (!!!) object from this method.
    *       It will be destroyed when the controller is deactivated.
    */
-  virtual QWidgetAction* getMenuWidget()
-  {
-    return nullptr;
-  }
-
-protected:
-  std::shared_ptr<Light> pLight; /**<The light that is controlled by this controller */
-  QString name;
+  virtual QWidgetAction* getMenuWidget() = 0;
 };

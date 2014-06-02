@@ -16,12 +16,13 @@ class QSettings;
 class DesktopController : public QThread, LightController
 {
 public:
-  DesktopController(std::shared_ptr<Light> light);
-  void activate();
+  DesktopController();
+  void activate(std::shared_ptr<Light> pLight);
   void deactivate();
   bool isActive() const;
   void setBrightness(const unsigned char value);
   QWidgetAction *getMenuWidget();
+  QString getName();
 
 private:
   struct Region
@@ -37,6 +38,7 @@ private:
   bool active;
   QMutex threadActive;
   unsigned char brightness; //the brightness that should be set
+  std::shared_ptr<Light> light;
 
   QSettings& settings;
   const QString refreshRateSetting;

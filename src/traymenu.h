@@ -26,4 +26,5 @@ private:
   QAction * quitAction;
   QMenu* controllerSelection;/**<The submenu that is used to select controllers */
   int activeController; /**< Index of the currently active controller */
+  std::shared_ptr<Light> light;
 };

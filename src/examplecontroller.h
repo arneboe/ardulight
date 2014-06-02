@@ -10,14 +10,15 @@ class ExampleController : public QThread, LightController
 {
   Q_OBJECT;
 public:
-  ExampleController(std::shared_ptr<Light> light);
+  ExampleController();
 
 public:
-  void activate();
+  void activate(std::shared_ptr<Light> pLight);
   void deactivate();
   bool isActive() const;
   void setBrightness(const unsigned char value);
   QWidgetAction* getMenuWidget();
+  QString getName();
 
 private slots:
   void speedChanged(int newSpeed);
@@ -30,6 +31,6 @@ private: //attributes
   int speed;
   QMutex threadActive;
   unsigned char brightness; //the brightness that should be set
-
+  std::shared_ptr<Light> light;
 
 };

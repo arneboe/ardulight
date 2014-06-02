@@ -8,17 +8,16 @@
 #include <QWidget>
 #include <QWidgetAction>
 
-ExampleController::ExampleController(std::shared_ptr<Light> light) :
-  LightController(light, "Example"), active(false), speed(500), brightness(255)
-{
+ExampleController::ExampleController() :
+  active(false), speed(500), brightness(255)
+{}
 
-}
-
-void ExampleController::activate()
+void ExampleController::activate(std::shared_ptr<Light> pLight)
 {
   if(!active)
   {
-    pLight->moveToThread(this); //take ownership of the light
+    light = pLight;
+    light->moveToThread(this); //take ownership of the light
     active = true;
     QThread::start();
   }
@@ -61,6 +60,11 @@ QWidgetAction *ExampleController::getMenuWidget()
   return action;
 }
 
+QString ExampleController::getName()
+{
+  return "Example";
+}
+
 void ExampleController::speedChanged(int newSpeed)
 {
   speed = newSpeed;
@@ -76,13 +80,13 @@ void ExampleController::run()
     if(currentBrightness != brightnessCopy)
     {
       currentBrightness = brightnessCopy;
-      pLight->setBrightness(brightnessCopy);
+      light->setBrightness(brightnessCopy);
     }
     const unsigned char r = rand() % 255;
     const unsigned char g = rand() % 255;
     const unsigned char b = rand() % 255;
-    pLight->setAllColors(r, g, b);
-    pLight->sendColors();
+    light->setAllColors(r, g, b);
+    light->sendColors();
     QThread::msleep(speed);
   }
 }

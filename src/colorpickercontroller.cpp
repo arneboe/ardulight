@@ -9,8 +9,8 @@
 #include <QMutexLocker>
 #include "Global.h"
 
-ColorPickerController::ColorPickerController(std::shared_ptr<Light> light)
-  : LightController(light, "Color Picker"), active(false),
+ColorPickerController::ColorPickerController()
+  : active(false),
     color("red"),//if it remains red something went wrong :D
     settings(Global::getInstance().getSettings()),
     redSetting("Controller/ColorPicker/Color/Red"),
@@ -28,11 +28,12 @@ ColorPickerController::ColorPickerController(std::shared_ptr<Light> light)
   connect(pPicker, SIGNAL(accepted()), this, SLOT(colorAccepted()));
 }
 
-void ColorPickerController::activate()
+void ColorPickerController::activate(std::shared_ptr<Light> pLight)
 {
   if(!active)
   {
-    pLight->moveToThread(this);
+    light = pLight;
+    light->moveToThread(this);
     active = true;
     QThread::start();
     //signal once to set the last known color
@@ -66,6 +67,11 @@ QWidgetAction *ColorPickerController::getMenuWidget()
   QWidgetAction* widget = new QWidgetAction(nullptr);
   widget->setDefaultWidget(button);
   return widget;
+}
+
+QString ColorPickerController::getName()
+{
+  return "Color Picker";
 }
 
 void ColorPickerController::buttonClicked(bool)
@@ -115,10 +121,10 @@ void ColorPickerController::run()
     {//This check is necessary because the sema will also be released when
      //stopping the thread.
       QColor tempColor = color; //copy to avoid mixing two consectuive colors :)
-      pLight->setAllColors((unsigned char) tempColor.red(),
+      light->setAllColors((unsigned char) tempColor.red(),
                            (unsigned char) tempColor.green(),
                            (unsigned char) tempColor.blue());
-      pLight->sendColors();
+      light->sendColors();
     }
   }
 }

@@ -12,20 +12,21 @@
 #include <QHBoxLayout>
 
 TrayMenu::TrayMenu(std::shared_ptr<Light> light, QWidget* parent) :
-  QMenu(parent), quitAction(new QAction("Quit", this)), activeController(-1)
+  QMenu(parent), quitAction(new QAction("Quit", this)), activeController(-1),
+  light(light)
 {
   //FIXME this should not be connected to qApp.quit(). Instead it should
   //invoke a local slot which cleans up before quitting.
   connect(quitAction, SIGNAL(triggered()),qApp,SLOT(quit()));
 
 
-  std::unique_ptr<LightController> color((LightController*) new ColorPickerController(light));
+  std::unique_ptr<LightController> color((LightController*) new ColorPickerController());
   controllers.push_back(std::move(color));
 
-  std::unique_ptr<LightController> desktop((LightController*) new DesktopController(light));
+  std::unique_ptr<LightController> desktop((LightController*) new DesktopController());
   controllers.push_back(std::move(desktop));
 
-  std::unique_ptr<LightController> example((LightController*) new ExampleController(light));
+  std::unique_ptr<LightController> example((LightController*) new ExampleController());
   controllers.push_back(std::move(example));
 
   //populate the controller selection submenu
@@ -81,7 +82,7 @@ void TrayMenu::activateController(const int controllerIndex)
     //TODO remove old action
   }
   activeController = controllerIndex;
-  controllers[controllerIndex]->activate();
+  controllers[controllerIndex]->activate(light);
   Q_ASSERT(this->actions().size() > 0);
   this->insertAction( this->actions()[0], controllers[controllerIndex]->getMenuWidget());
 }

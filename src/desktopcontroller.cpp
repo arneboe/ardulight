@@ -6,8 +6,8 @@
 #include "Global.h"
 #include <QDebug>
 
-DesktopController::DesktopController(std::shared_ptr<Light> light) :
-  LightController(light, "Ambilight"), active(false), brightness(255),
+DesktopController::DesktopController() :
+  active(false), brightness(255),
   settings(Global::getInstance().getSettings()),
   refreshRateSetting("Controller/Desktop/RefreshRate"),
   bottomLeftSetting("Controller/Desktop/Leds/BottomLeft"),
@@ -22,12 +22,13 @@ DesktopController::DesktopController(std::shared_ptr<Light> light) :
 {
 }
 
-void DesktopController::activate()
+void DesktopController::activate(std::shared_ptr<Light> pLight)
 {
   if(!active)
   {
+    light = pLight;
     active = true;
-    pLight->moveToThread(this); //take ownership of the light
+    light->moveToThread(this); //take ownership of the light
     QThread::start();
   }
 }
@@ -55,6 +56,11 @@ QWidgetAction *DesktopController::getMenuWidget()
   return new QWidgetAction(NULL);
 }
 
+QString DesktopController::getName()
+{
+  return "Ambilight";
+}
+
 void DesktopController::run()
 {
   QMutexLocker lock(&threadActive);
@@ -75,15 +81,15 @@ void DesktopController::run()
     for(const Region& region : regions)
     {
       const QRgb avg = getAvgOfRegion(region.rect, buffer.data(), screen.getWidth());
-      pLight->setColor(region.ledIndex, qRed(avg), qGreen(avg), qBlue(avg));
+      light->setColor(region.ledIndex, qRed(avg), qGreen(avg), qBlue(avg));
     }
-    pLight->sendColors();
+    light->sendColors();
 
     const unsigned char tempBrightness = brightness;//copy to avoid race condition
     if(tempBrightness != currentBrightness)
     {
       currentBrightness = tempBrightness;
-      pLight->setBrightness(tempBrightness);
+      light->setBrightness(tempBrightness);
     }
 
     QThread::msleep(5); //FIXME use refreshRate from settings
