@@ -3,12 +3,12 @@
 #include <QWidgetAction>
 #include "Light.h"
 #include <QDir>
-#include "ColorPickerController.h"
 #include <QWidget>
 #include <QSlider>
 #include <QLabel>
 #include <QHBoxLayout>
 #include <QPluginLoader>
+#include "LightController.h"
 
 TrayMenu::TrayMenu(std::shared_ptr<ILight> light, QWidget* parent) :
   QMenu(parent), quitAction(new QAction("Quit", this)), activeController(-1),
