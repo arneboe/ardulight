@@ -3,14 +3,14 @@
 #include <vector>
 #include <memory>
 
-class Light;
+class ILight;
 class LightController;
 class QAction;
 class TrayMenu : public QMenu
 {
   Q_OBJECT
 public:
-  explicit TrayMenu(std::shared_ptr<Light> light, QWidget* parent = NULL);
+  explicit TrayMenu(std::shared_ptr<ILight> light, QWidget* parent = NULL);
 
 private:
 
@@ -22,9 +22,13 @@ private slots:
   void controllerSelected(QAction* action);
 
 private:
+
+  /**Loads all light controllers */
+  void loadPlugins();
+
   std::vector<std::unique_ptr<LightController> > controllers;
   QAction * quitAction;
   QMenu* controllerSelection;/**<The submenu that is used to select controllers */
   int activeController; /**< Index of the currently active controller */
-  std::shared_ptr<Light> light;
+  std::shared_ptr<ILight> light;
 };

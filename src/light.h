@@ -2,11 +2,12 @@
 #include <QtSerialPort/QtSerialPort>
 #include <QObject>
 #include <QMutex>
+#include "ILight.h"
 /**
  * @brief Hardware interface to the ardulight.
  * Accessing the hardware will block until the command succeded.
  */
-class Light : public QObject
+class Light : public QObject, ILight
 {
   Q_OBJECT;
 public:
@@ -21,6 +22,9 @@ public:
   /**Sends all colors to the arduino and shows them.
      Is thread safe*/
   void sendColors();
+
+  void moveToThread(QThread * targetThread);
+  QThread *thread() const;
 
   /**Is thread safe */
 public slots:

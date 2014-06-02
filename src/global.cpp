@@ -1,7 +1,11 @@
 #include "Global.h"
 #include <QApplication>
-Global::Global() : settings("config.ini", QSettings::IniFormat)
-{}
+#include <QDir>
+#include <QDebug>
+Global::Global() : settings(QDir(qApp->applicationDirPath()).absoluteFilePath("config.ini") , QSettings::IniFormat)
+{
+  qDebug() << "Loaded settings from: " << settings.fileName();
+}
 
 QSettings& Global::getSettings()
 {

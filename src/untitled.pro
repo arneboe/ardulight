@@ -13,9 +13,6 @@ TEMPLATE = app
 
 SOURCES += main.cpp \
     Screen.cpp \
-    ColorPickerController.cpp \
-    DesktopController.cpp \
-    ExampleController.cpp \
     Global.cpp \
     Light.cpp \
     TrayMenu.cpp
@@ -25,10 +22,9 @@ HEADERS += Screen.h \
     LightController.h \
     TrayMenu.h \
     Light.h \
+    ILight.h \
     Global.h \
-    ExampleController.h \
-    DesktopController.h \
-    ColorPickerController.h
+
 HEADERS += d3d9.h
 HEADERS += d3dx9.h
 HEADERS += d3dx9d.h

@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
   QCoreApplication::setOrganizationDomain("www.rnae.de");
   QCoreApplication::setApplicationName("Ardulight");
 
-  std::shared_ptr<Light> light(new Light());
+  std::shared_ptr<ILight> light((ILight*) new Light());
   QSystemTrayIcon tray(QIcon(":/resources/lightbulb-1.ico"));
   TrayMenu* menu = new TrayMenu(light);
   tray.setContextMenu(menu);//menu should be deleted when tray is destroyed

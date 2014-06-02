@@ -70,6 +70,16 @@ void Light::sendColors()
   }
 }
 
+void Light::moveToThread(QThread *targetThread)
+{
+  QObject::moveToThread(targetThread);
+}
+
+QThread *Light::thread() const
+{
+  return QObject::thread();
+}
+
 void Light::send(const QByteArray& data)
 {
   QMutexLocker ml(&sendMutex);

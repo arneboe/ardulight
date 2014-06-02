@@ -1,6 +1,6 @@
 #include "ExampleController.h"
 #include <QMutexLocker>
-#include "Light.h"
+#include <Light.h>
 #include <cstdlib>
 #include <QSlider>
 #include <QLabel>
@@ -12,12 +12,17 @@ ExampleController::ExampleController() :
   active(false), speed(500), brightness(255)
 {}
 
-void ExampleController::activate(std::shared_ptr<Light> pLight)
+void ExampleController::activate(std::shared_ptr<ILight> pLight)
 {
+  if(nullptr == pLight.get())
+  {
+    qWarning() << "ExampleController::activate(): pLight is NULL";
+  }
   if(!active)
   {
     light = pLight;
-    light->moveToThread(this); //take ownership of the light
+    previousLightOwner = light->thread();
+    light->moveToThread(this);//This only works if the calling thread is the owner of light
     active = true;
     QThread::start();
   }
@@ -74,20 +79,32 @@ void ExampleController::run()
 {
   QMutexLocker ml(&threadActive);
   unsigned char currentBrightness = 0;
-  while(active)
+  if(nullptr != light.get())
   {
-    const unsigned char brightnessCopy = brightness; //to avoid race condition
-    if(currentBrightness != brightnessCopy)
+    while(active)
     {
-      currentBrightness = brightnessCopy;
-      light->setBrightness(brightnessCopy);
+      const unsigned char brightnessCopy = brightness; //to avoid race condition
+      if(currentBrightness != brightnessCopy)
+      {
+        currentBrightness = brightnessCopy;
+        light->setBrightness(brightnessCopy);
+      }
+      const unsigned char r = rand() % 255;
+      const unsigned char g = rand() % 255;
+      const unsigned char b = rand() % 255;
+      light->setAllColors(r, g, b);
+      light->sendColors();
+      QThread::msleep(speed);
     }
-    const unsigned char r = rand() % 255;
-    const unsigned char g = rand() % 255;
-    const unsigned char b = rand() % 255;
-    light->setAllColors(r, g, b);
-    light->sendColors();
-    QThread::msleep(speed);
+
+    //Move the Light back to the main thread.
+    //This is important otherwise other plugins might not be
+    //able to use it
+    light->moveToThread(previousLightOwner);
+  }
+  else
+  {
+    qWarning() << "ExampleController: light is NULL";
   }
 }
 
