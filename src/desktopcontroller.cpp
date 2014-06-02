@@ -121,17 +121,16 @@ void DesktopController::generateRegions(std::vector<Region>& regions, const int 
   //FIXME this method contains a lot of duplicate code
   regions.clear();
 
-  const int resY = screenHeight;
   const int regionThickness = settings.value(thicknessSetting, 120).toInt();
 
   //left regions
   const int leftBottomIndex = settings.value(leftBottomSetting, 0).toInt();
   const int leftTopIndex = settings.value(leftTopSetting, 0).toInt();
   const int numLeftLeds = abs(leftBottomIndex - leftTopIndex) + 1; //+1 because both indices are inclusive
-  const int pixelsPerLeftLed = resY / numLeftLeds;
+  const int pixelsPerLeftLed = screenHeight / numLeftLeds;
   //the amout of pixels that will be skipped at the top and bottom if resY is not
   //divisable by numLeftLeds.
-  const int halfRestPixelsLeft = (resY % numLeftLeds) / 2;
+  const int halfRestPixelsLeft = (screenHeight % numLeftLeds) / 2;
   const int leftIndexDirection = leftTopIndex > leftBottomIndex ? -1 : 1;
 
   for(int i = 0, ledIndex = leftTopIndex; i < numLeftLeds; ++i, ledIndex += leftIndexDirection)
@@ -142,8 +141,8 @@ void DesktopController::generateRegions(std::vector<Region>& regions, const int 
     r.ledIndex = ledIndex;
     r.rect = QRect(regionX, regionY, regionThickness, pixelsPerLeftLed);
     regions.push_back(r);
-    qDebug() << "LED " << r.ledIndex << ": x = " << regionX << ", y = " << regionY <<
-                ", w = " << regionThickness << ", h = " << pixelsPerLeftLed;
+    qDebug() << "LED " << r.ledIndex << ": x = " << r.rect.x() << ", y = " << r.rect.y() <<
+                ", w = " << r.rect.width() << ", h = " << r.rect.height();
   }
 
 
@@ -151,8 +150,8 @@ void DesktopController::generateRegions(std::vector<Region>& regions, const int 
   const int rightBottomIndex = settings.value(rightBottomSetting, 0).toInt();
   const int rightTopIndex = settings.value(rightTopSetting, 0).toInt();
   const int numRightLeds = abs(rightBottomIndex - rightTopIndex) + 1; //+1 because both indices are inclusive
-  const int pixelsPerRightLed = resY / numRightLeds;
-  const int halfRestPixelsRight = (resY % numRightLeds) / 2;
+  const int pixelsPerRightLed = screenHeight / numRightLeds;
+  const int halfRestPixelsRight = (screenHeight % numRightLeds) / 2;
   const int rightIndexDirection = rightTopIndex > rightBottomIndex ? -1 : 1;
 
   for(int i = 0, ledIndex = rightTopIndex; i < numRightLeds; ++i, ledIndex += rightIndexDirection)
@@ -163,8 +162,50 @@ void DesktopController::generateRegions(std::vector<Region>& regions, const int 
     r.ledIndex = ledIndex;
     r.rect = QRect(regionX, regionY, regionThickness, pixelsPerRightLed);
     regions.push_back(r);
-    qDebug() << "LED " << r.ledIndex << ": x = " << regionX << ", y = " << regionY <<
-                ", w = " << regionThickness << ", h = " << pixelsPerLeftLed;
+    qDebug() << "LED " << r.ledIndex << ": x = " << r.rect.x() << ", y = " << r.rect.y() <<
+                ", w = " << r.rect.width() << ", h = " << r.rect.height();
+  }
+
+
+  //bottom regions
+  const int bottomRightIndex = settings.value(bottomRightSetting, 0).toInt();
+  const int bottomLeftIndex = settings.value(bottomLeftSetting, 0).toInt();
+  const int numBottomLeds = abs(bottomRightIndex - bottomLeftIndex) + 1; //+1 because both indices are inclusive
+  const int pixelsPerBottomLed = screenWidth / numBottomLeds;
+  const int halfRestPixelsBottom = (screenWidth % numBottomLeds) / 2;
+  const int bottomIndexDirection = bottomLeftIndex > bottomRightIndex ? -1 : 1;
+
+  for(int i = 0, ledIndex = bottomLeftIndex; i < numBottomLeds; ++i, ledIndex += bottomIndexDirection)
+  {
+    const int regionX = halfRestPixelsBottom + i * pixelsPerBottomLed;
+    const int regionY = screenHeight - regionThickness;
+    Region r;
+    r.ledIndex = ledIndex;
+    r.rect = QRect(regionX, regionY, pixelsPerBottomLed, regionThickness);
+    regions.push_back(r);
+    qDebug() << "LED " << r.ledIndex << ": x = " << r.rect.x() << ", y = " << r.rect.y() <<
+                ", w = " << r.rect.width() << ", h = " << r.rect.height();
+  }
+
+
+  //top regions
+  const int topRightIndex = settings.value(topRightSetting, 0).toInt();
+  const int topLeftIndex = settings.value(topLeftSetting, 0).toInt();
+  const int numTopLeds = abs(topRightIndex - topLeftIndex) + 1; //+1 because both indices are inclusive
+  const int pixelsPerTopLed = screenWidth / numTopLeds;
+  const int halfRestPixelsTop = (screenWidth % numTopLeds) / 2;
+  const int topIndexDirection = topLeftIndex > topRightIndex ? -1 : 1;
+
+  for(int i = 0, ledIndex = topLeftIndex; i < numTopLeds; ++i, ledIndex += topIndexDirection)
+  {
+    const int regionX = halfRestPixelsTop + i * pixelsPerTopLed;
+    const int regionY = 0;
+    Region r;
+    r.ledIndex = ledIndex;
+    r.rect = QRect(regionX, regionY, pixelsPerBottomLed, regionThickness);
+    regions.push_back(r);
+    qDebug() << "LED " << r.ledIndex << ": x = " << r.rect.x() << ", y = " << r.rect.y() <<
+                ", w = " << r.rect.width() << ", h = " << r.rect.height();
   }
 
 }
