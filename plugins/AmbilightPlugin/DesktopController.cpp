@@ -4,6 +4,7 @@
 #include "Screen.h"
 #include <QDebug>
 #include <QApplication>
+#include <QDir>
 
 DesktopController::DesktopController() :
   active(false), brightness(255),
@@ -19,6 +20,7 @@ DesktopController::DesktopController() :
   rightTopSetting("Leds/RightTop"),
   thicknessSetting("Leds/RegionThickness")
 {
+  qDebug() << "Ambilight settings: " << settings.fileName();
 }
 
 void DesktopController::activate(std::shared_ptr<ILight> pLight)
