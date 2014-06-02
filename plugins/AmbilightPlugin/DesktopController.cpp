@@ -20,7 +20,7 @@ DesktopController::DesktopController() :
   rightTopSetting("Leds/RightTop"),
   thicknessSetting("Leds/RegionThickness")
 {
-  qDebug() << "Ambilight settings: " << settings.fileName();
+  qDebug() << "AmbilightPlugin: Loading settings from: " << settings.fileName();
 }
 
 void DesktopController::activate(std::shared_ptr<ILight> pLight)

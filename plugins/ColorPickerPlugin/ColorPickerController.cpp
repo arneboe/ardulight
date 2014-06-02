@@ -38,6 +38,10 @@ void ColorPickerController::activate(std::shared_ptr<ILight> pLight)
     light->moveToThread(this);
     active = true;
     QThread::start();
+    //FIXME This sleep should not be here.
+    //It is here because for some reason the light needs time between
+    //switches?
+    QThread::sleep(1);
     //signal once to set the last known color
     signalColorChanged.release();
   }
